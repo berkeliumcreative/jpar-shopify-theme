@@ -113,13 +113,6 @@
     }
   }
 
-  /* Pause on hover for accessibility */
-  @media (hover: hover) {
-    #marquee-banner-{{ section.id }}:hover .marquee-banner__track {
-      animation-play-state: paused;
-    }
-  }
-
   /* Respect reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     #marquee-banner-{{ section.id }} .marquee-banner__track {

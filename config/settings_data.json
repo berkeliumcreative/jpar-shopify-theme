@@ -1,5 +1,15 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
+    "favicon": "shopify://shop_images/Jpar_Logo_Rounded_Edges.png",
     "color_primary": "#E02020",
     "color_primary_dark": "#B31A1A",
     "color_background": "#FFFFFF",
@@ -8,16 +18,21 @@
     "color_border": "#E8DEDE",
     "color_secondary_bg": "#FAF5F5",
     "font_body_size": 16,
+    "social_instagram": "https://instagram.com/jpar",
+    "social_facebook": "https://facebook.com/JPAR-Cosmetics",
+    "social_twitter": "https://twitter.com/jparcosmetics",
     "cart_type": "drawer",
     "popup_enabled": true,
     "popup_delay": 10,
     "popup_heading": "Get 10% Off",
     "popup_text": "Subscribe to our newsletter and get an exclusive discount on your first order!",
     "popup_button_text": "Get My Discount",
-    "social_instagram": "https://instagram.com/jparcosmetics",
-    "social_facebook": "https://facebook.com/jparcosmetics",
-    "social_twitter": "https://twitter.com/jparcosmetics",
-    "sections": {},
+    "sections": {
+      "email-popup": {
+        "type": "email-popup",
+        "settings": {}
+      }
+    },
     "content_for_index": []
   }
 }

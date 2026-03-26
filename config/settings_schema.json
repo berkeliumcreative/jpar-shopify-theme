@@ -8,6 +8,17 @@
     "theme_support_url": "https://github.com/berkeliumcreative/jpar-shopify-theme/issues"
   },
   {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon Image",
+        "info": "32x32 PNG recommended. Shown in browser tabs."
+      }
+    ]
+  },
+  {
     "name": "Colors",
     "settings": [
       {

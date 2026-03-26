@@ -64,6 +64,24 @@
   --header-height-md: 4rem;
 }
 
+/* Dark Mode — matches React .dark class from index.css */
+.dark,
+[data-theme="dark"] {
+  --color-primary: hsl(4, 84%, 55%);
+  --color-primary-rgb: 230, 57, 47;
+  --color-primary-dark: hsl(4, 75%, 40%);
+  --color-primary-hover: rgba(230, 57, 47, 0.9);
+  --color-primary-10: rgba(230, 57, 47, 0.1);
+  --color-primary-30: rgba(230, 57, 47, 0.3);
+
+  --color-bg: hsl(0, 30%, 5%);
+  --color-fg: hsl(0, 10%, 95%);
+  --color-muted: hsl(0, 10%, 60%);
+  --color-border: hsl(0, 20%, 15%);
+  --color-secondary-bg: hsl(0, 20%, 15%);
+  --color-card: hsl(0, 30%, 8%);
+}
+
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {

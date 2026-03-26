@@ -5,7 +5,7 @@
   Matches the React EmailPopup component.
 {% endcomment %}
 
-{%- if settings.popup_enabled -%}
+{%- if settings.popup_enabled and customer == nil -%}
   {%- liquid
     assign popup_heading = settings.popup_heading | default: 'Get 10% Off'
     assign popup_text = settings.popup_text | default: 'Subscribe to our newsletter and get an exclusive discount on your first order!'

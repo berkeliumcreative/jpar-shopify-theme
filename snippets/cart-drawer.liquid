@@ -22,7 +22,11 @@
     <div class="cart-drawer__header-text">
       <h2 class="cart-drawer__title">Shopping Cart</h2>
       <span class="cart-drawer__subtitle" data-cart-drawer-count>
-        {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}
+        {%- if cart.item_count == 0 -%}
+          Your cart is empty
+        {%- else -%}
+          {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }} in your cart
+        {%- endif -%}
       </span>
     </div>
     <button
@@ -576,7 +580,9 @@
 
       /* Update count text */
       if (countEl) {
-        countEl.textContent = itemCount + ' ' + (itemCount === 1 ? 'item' : 'items');
+        countEl.textContent = itemCount === 0
+          ? 'Your cart is empty'
+          : itemCount + ' ' + (itemCount === 1 ? 'item' : 'items') + ' in your cart';
       }
 
       /* Update subtotal */

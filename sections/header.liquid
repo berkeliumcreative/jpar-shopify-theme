@@ -1,0 +1,953 @@
+{% comment %}
+  Header Section — JPAR Cosmetics
+  Two modes: dark (transparent, white text) and light (white bg, dark text).
+  Controlled by `force_dark` section setting.
+  Desktop: full-screen red overlay with circle clip-path animation for dropdowns.
+  Mobile: hamburger opens same overlay with sub-nav drill-down.
+{% endcomment %}
+
+{%- liquid
+  assign force_dark = section.settings.force_dark
+  if force_dark
+    assign header_class = 'header--dark'
+  else
+    assign header_class = 'header--light'
+  endif
+-%}
+
+<header
+  id="SiteHeader"
+  class="header {{ header_class }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="header"
+  role="banner"
+>
+  <div class="header__inner">
+    {%- comment -%} Logo {%- endcomment -%}
+    <a href="/" class="header__logo" aria-label="{{ shop.name }} - Home">
+      <img
+        src="{{ 'jpar-logo-icon.png' | asset_url }}"
+        alt="{{ shop.name }}"
+        width="40"
+        height="40"
+        loading="eager"
+      >
+    </a>
+
+    {%- comment -%} Desktop Navigation {%- endcomment -%}
+    <nav class="header__nav" aria-label="Main navigation">
+      <ul class="header__nav-list" role="menubar">
+        <li class="header__nav-item" role="none">
+          <a href="/" class="header__nav-link" role="menuitem">Home</a>
+        </li>
+
+        <li class="header__nav-item header__nav-item--dropdown" role="none">
+          <button
+            class="header__nav-link header__dropdown-trigger"
+            role="menuitem"
+            aria-haspopup="true"
+            aria-expanded="false"
+            data-dropdown="products"
+          >
+            Products
+            <span class="header__chevron" aria-hidden="true">
+              {% render 'icon-svg', icon: 'chevron-down' %}
+            </span>
+          </button>
+        </li>
+
+        <li class="header__nav-item header__nav-item--dropdown" role="none">
+          <button
+            class="header__nav-link header__dropdown-trigger"
+            role="menuitem"
+            aria-haspopup="true"
+            aria-expanded="false"
+            data-dropdown="learn"
+          >
+            Learn
+            <span class="header__chevron" aria-hidden="true">
+              {% render 'icon-svg', icon: 'chevron-down' %}
+            </span>
+          </button>
+        </li>
+
+        <li class="header__nav-item" role="none">
+          <a href="/collections/all" class="header__nav-link" role="menuitem">Shop</a>
+        </li>
+
+        <li class="header__nav-item" role="none">
+          <a href="/pages/contact" class="header__nav-link" role="menuitem">Contact</a>
+        </li>
+      </ul>
+    </nav>
+
+    {%- comment -%} Right-side actions {%- endcomment -%}
+    <div class="header__actions">
+      <a href="/account" class="header__action-btn" aria-label="Account">
+        {% render 'icon-svg', icon: 'user' %}
+      </a>
+
+      <a href="/cart" class="header__action-btn header__cart-btn" aria-label="Cart ({{ cart.item_count }} items)">
+        {% render 'icon-svg', icon: 'cart' %}
+        {%- if cart.item_count > 0 -%}
+          <span class="header__cart-badge" data-cart-count>{{ cart.item_count }}</span>
+        {%- endif -%}
+      </a>
+
+      {%- comment -%} Mobile hamburger {%- endcomment -%}
+      <button
+        class="header__hamburger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="MobileOverlay"
+        data-mobile-toggle
+      >
+        {% render 'icon-svg', icon: 'menu' %}
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} Full-screen overlay (shared desktop + mobile) {%- endcomment -%}
+  <div
+    id="HeaderOverlay"
+    class="header__overlay"
+    aria-hidden="true"
+    role="dialog"
+    aria-label="Navigation menu"
+  >
+    {%- comment -%} Close button {%- endcomment -%}
+    <button class="header__overlay-close" aria-label="Close menu" data-overlay-close>
+      {% render 'icon-svg', icon: 'close' %}
+    </button>
+
+    {%- comment -%} Desktop dropdown content {%- endcomment -%}
+    <div class="header__overlay-desktop">
+      <div class="header__submenu" data-submenu="products" aria-label="Products submenu">
+        <ul class="header__submenu-list">
+          <li>
+            <a href="/collections/all" class="header__submenu-link">
+              <span class="header__submenu-title">All Products</span>
+              <span class="header__submenu-desc">Browse our full collection</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/skincare" class="header__submenu-link">
+              <span class="header__submenu-title">Skincare</span>
+              <span class="header__submenu-desc">Nourish & protect</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/makeup" class="header__submenu-link">
+              <span class="header__submenu-title">Makeup</span>
+              <span class="header__submenu-desc">Bold & beautiful</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/haircare" class="header__submenu-link">
+              <span class="header__submenu-title">Haircare</span>
+              <span class="header__submenu-desc">Shine & strength</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="header__submenu" data-submenu="learn" aria-label="Learn submenu">
+        <ul class="header__submenu-list">
+          <li>
+            <a href="/pages/our-story" class="header__submenu-link">
+              <span class="header__submenu-title">Our Story</span>
+              <span class="header__submenu-desc">The jpar journey</span>
+            </a>
+          </li>
+          <li>
+            <a href="/blogs/journal" class="header__submenu-link">
+              <span class="header__submenu-title">Blog</span>
+              <span class="header__submenu-desc">Tips, trends & tutorials</span>
+            </a>
+          </li>
+          <li>
+            <a href="/pages/contact" class="header__submenu-link">
+              <span class="header__submenu-title">Contact</span>
+              <span class="header__submenu-desc">Get in touch</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {%- comment -%} Mobile menu content {%- endcomment -%}
+    <div class="header__overlay-mobile">
+      {%- comment -%} Main level {%- endcomment -%}
+      <div class="header__mobile-main" data-mobile-level="main">
+        <ul class="header__mobile-list">
+          <li><a href="/" class="header__mobile-link">Home</a></li>
+          <li>
+            <button class="header__mobile-link header__mobile-link--parent" data-mobile-open="products">
+              Products
+              <span class="header__mobile-arrow" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-right' %}</span>
+            </button>
+          </li>
+          <li>
+            <button class="header__mobile-link header__mobile-link--parent" data-mobile-open="learn">
+              Learn
+              <span class="header__mobile-arrow" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-right' %}</span>
+            </button>
+          </li>
+          <li><a href="/collections/all" class="header__mobile-link">Shop</a></li>
+          <li><a href="/pages/contact" class="header__mobile-link">Contact</a></li>
+        </ul>
+      </div>
+
+      {%- comment -%} Products sub-level {%- endcomment -%}
+      <div class="header__mobile-sub" data-mobile-level="products" aria-hidden="true">
+        <button class="header__mobile-back" data-mobile-back>
+          <span aria-hidden="true">{% render 'icon-svg', icon: 'chevron-left' %}</span>
+          Back
+        </button>
+        <ul class="header__mobile-list">
+          <li>
+            <a href="/collections/all" class="header__mobile-link">
+              <span class="header__mobile-link-title">All Products</span>
+              <span class="header__mobile-link-desc">Browse our full collection</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/skincare" class="header__mobile-link">
+              <span class="header__mobile-link-title">Skincare</span>
+              <span class="header__mobile-link-desc">Nourish & protect</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/makeup" class="header__mobile-link">
+              <span class="header__mobile-link-title">Makeup</span>
+              <span class="header__mobile-link-desc">Bold & beautiful</span>
+            </a>
+          </li>
+          <li>
+            <a href="/collections/haircare" class="header__mobile-link">
+              <span class="header__mobile-link-title">Haircare</span>
+              <span class="header__mobile-link-desc">Shine & strength</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {%- comment -%} Learn sub-level {%- endcomment -%}
+      <div class="header__mobile-sub" data-mobile-level="learn" aria-hidden="true">
+        <button class="header__mobile-back" data-mobile-back>
+          <span aria-hidden="true">{% render 'icon-svg', icon: 'chevron-left' %}</span>
+          Back
+        </button>
+        <ul class="header__mobile-list">
+          <li>
+            <a href="/pages/our-story" class="header__mobile-link">
+              <span class="header__mobile-link-title">Our Story</span>
+              <span class="header__mobile-link-desc">The jpar journey</span>
+            </a>
+          </li>
+          <li>
+            <a href="/blogs/journal" class="header__mobile-link">
+              <span class="header__mobile-link-title">Blog</span>
+              <span class="header__mobile-link-desc">Tips, trends & tutorials</span>
+            </a>
+          </li>
+          <li>
+            <a href="/pages/contact" class="header__mobile-link">
+              <span class="header__mobile-link-title">Contact</span>
+              <span class="header__mobile-link-desc">Get in touch</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% stylesheet %}
+  /* ==============================
+     Header — Base
+     ============================== */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 70;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    position: relative;
+    z-index: 72;
+  }
+
+  @media (min-width: 768px) {
+    .header__inner {
+      padding: 20px 48px;
+    }
+  }
+
+  /* ==============================
+     Header — Dark mode (transparent, white text)
+     ============================== */
+  .header--dark {
+    background: transparent;
+    color: #fff;
+  }
+
+  .header--dark .header__nav-link,
+  .header--dark .header__action-btn,
+  .header--dark .header__hamburger {
+    color: #fff;
+  }
+
+  .header--dark .header__nav-link:hover {
+    opacity: 0.7;
+  }
+
+  /* ==============================
+     Header — Light mode (white bg, dark text)
+     ============================== */
+  .header--light {
+    background: #fff;
+    color: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .header--light .header__nav-link,
+  .header--light .header__action-btn,
+  .header--light .header__hamburger {
+    color: #1a1a1a;
+  }
+
+  .header--light .header__nav-link:hover {
+    opacity: 0.6;
+  }
+
+  /* ==============================
+     Logo
+     ============================== */
+  .header__logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .header__logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+
+  /* ==============================
+     Desktop Navigation
+     ============================== */
+  .header__nav {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .header__nav {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .header__nav-list {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__chevron {
+    display: inline-flex;
+    align-items: center;
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+  }
+
+  .header__chevron svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .header__dropdown-trigger[aria-expanded="true"] .header__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ==============================
+     Right-side actions
+     ============================== */
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .header__action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__action-btn:hover {
+    opacity: 0.7;
+  }
+
+  .header__action-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header__cart-btn {
+    position: relative;
+  }
+
+  .header__cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsl(0, 75%, 50%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 9px;
+    padding: 0 5px;
+  }
+
+  /* ==============================
+     Hamburger (mobile only)
+     ============================== */
+  .header__hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .header__hamburger svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  @media (min-width: 768px) {
+    .header__hamburger {
+      display: none;
+    }
+  }
+
+  /* ==============================
+     Full-screen Overlay
+     ============================== */
+  .header__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 71;
+    background: hsl(0, 75%, 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: circle(0% at var(--clip-x, 50%) var(--clip-y, 50%));
+    transition: clip-path 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .header__overlay.is-active {
+    clip-path: circle(150% at var(--clip-x, 50%) var(--clip-y, 50%));
+    pointer-events: auto;
+  }
+
+  /* ==============================
+     Overlay — Close button
+     ============================== */
+  .header__overlay-close {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    z-index: 73;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  @media (min-width: 768px) {
+    .header__overlay-close {
+      top: 20px;
+      right: 48px;
+    }
+  }
+
+  .header__overlay-close:hover {
+    opacity: 0.7;
+  }
+
+  .header__overlay-close svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* ==============================
+     Overlay — Desktop submenus
+     ============================== */
+  .header__overlay-desktop {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .header__overlay-desktop {
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      padding: 0 48px;
+    }
+  }
+
+  .header__submenu {
+    display: none;
+  }
+
+  .header__submenu.is-visible {
+    display: block;
+    animation: submenuFadeIn 0.3s ease forwards;
+  }
+
+  @keyframes submenuFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .header__submenu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .header__submenu-list li + li {
+    margin-top: 24px;
+  }
+
+  .header__submenu-link {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__submenu-link:hover {
+    opacity: 0.8;
+  }
+
+  .header__submenu-title {
+    display: block;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 1024px) {
+    .header__submenu-title {
+      font-size: 48px;
+    }
+  }
+
+  .header__submenu-desc {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ==============================
+     Overlay — Mobile menu
+     ============================== */
+  .header__overlay-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 80px 24px 40px;
+    min-height: 100vh;
+  }
+
+  @media (min-width: 768px) {
+    .header__overlay-mobile {
+      display: none;
+    }
+  }
+
+  .header__mobile-main,
+  .header__mobile-sub {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .header__mobile-sub[aria-hidden="true"] {
+    display: none;
+  }
+
+  .header__mobile-sub[aria-hidden="false"] {
+    display: block;
+    animation: mobileSlideIn 0.25s ease forwards;
+  }
+
+  @keyframes mobileSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .header__mobile-main[aria-hidden="true"] {
+    display: none;
+  }
+
+  .header__mobile-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .header__mobile-list li + li {
+    margin-top: 16px;
+  }
+
+  .header__mobile-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    font-family: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__mobile-link:hover {
+    opacity: 0.8;
+  }
+
+  .header__mobile-link--parent {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .header__mobile-arrow {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+  }
+
+  .header__mobile-arrow svg {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+  }
+
+  .header__mobile-link-title {
+    font-size: 28px;
+    font-weight: 700;
+    display: block;
+  }
+
+  .header__mobile-link-desc {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.7;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .header__mobile-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 24px;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .header__mobile-back:hover {
+    opacity: 1;
+  }
+
+  .header__mobile-back svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ==============================
+     Body scroll lock
+     ============================== */
+  body.header-overlay-open {
+    overflow: hidden;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var section = document.getElementById('SiteHeader');
+    if (!section) return;
+
+    var overlay = document.getElementById('HeaderOverlay');
+    var closeBtn = overlay.querySelector('[data-overlay-close]');
+    var desktopContainer = overlay.querySelector('.header__overlay-desktop');
+    var mobileContainer = overlay.querySelector('.header__overlay-mobile');
+    var hamburger = section.querySelector('[data-mobile-toggle]');
+    var dropdownTriggers = section.querySelectorAll('.header__dropdown-trigger');
+
+    var activeDropdown = null;
+    var isOpen = false;
+
+    /* ---- Helpers ---- */
+    function getClipOrigin(el) {
+      var rect = el.getBoundingClientRect();
+      var x = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
+      var y = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+      return { x: x + '%', y: y + '%' };
+    }
+
+    function openOverlay(originEl) {
+      var origin = getClipOrigin(originEl);
+      overlay.style.setProperty('--clip-x', origin.x);
+      overlay.style.setProperty('--clip-y', origin.y);
+      overlay.classList.add('is-active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('header-overlay-open');
+      isOpen = true;
+    }
+
+    function closeOverlay() {
+      overlay.classList.remove('is-active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('header-overlay-open');
+      isOpen = false;
+      activeDropdown = null;
+
+      /* Reset all trigger aria states */
+      dropdownTriggers.forEach(function (t) {
+        t.setAttribute('aria-expanded', 'false');
+      });
+
+      /* Hide all submenus */
+      overlay.querySelectorAll('.header__submenu').forEach(function (s) {
+        s.classList.remove('is-visible');
+      });
+
+      /* Reset mobile to main level */
+      resetMobileToMain();
+    }
+
+    /* ---- Desktop dropdown logic ---- */
+    function showSubmenu(name) {
+      overlay.querySelectorAll('.header__submenu').forEach(function (s) {
+        s.classList.remove('is-visible');
+      });
+      var target = overlay.querySelector('[data-submenu="' + name + '"]');
+      if (target) {
+        target.classList.add('is-visible');
+      }
+    }
+
+    dropdownTriggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function (e) {
+        e.preventDefault();
+        var name = trigger.getAttribute('data-dropdown');
+
+        if (isOpen && activeDropdown === name) {
+          /* Same dropdown — close overlay */
+          closeOverlay();
+          return;
+        }
+
+        if (isOpen && activeDropdown !== name) {
+          /* Different dropdown — swap content, no re-animation */
+          activeDropdown = name;
+          dropdownTriggers.forEach(function (t) {
+            t.setAttribute('aria-expanded', t.getAttribute('data-dropdown') === name ? 'true' : 'false');
+          });
+          showSubmenu(name);
+          return;
+        }
+
+        /* Not open — open with animation */
+        activeDropdown = name;
+        trigger.setAttribute('aria-expanded', 'true');
+        showSubmenu(name);
+        openOverlay(trigger);
+      });
+    });
+
+    /* ---- Mobile menu logic ---- */
+    function resetMobileToMain() {
+      var main = mobileContainer.querySelector('[data-mobile-level="main"]');
+      if (main) {
+        main.style.display = '';
+        main.removeAttribute('aria-hidden');
+      }
+      mobileContainer.querySelectorAll('.header__mobile-sub').forEach(function (sub) {
+        sub.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    hamburger.addEventListener('click', function () {
+      if (isOpen) {
+        closeOverlay();
+        hamburger.setAttribute('aria-expanded', 'false');
+      } else {
+        resetMobileToMain();
+        openOverlay(hamburger);
+        hamburger.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    /* Open sub-level */
+    mobileContainer.querySelectorAll('[data-mobile-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = btn.getAttribute('data-mobile-open');
+        var main = mobileContainer.querySelector('[data-mobile-level="main"]');
+        var sub = mobileContainer.querySelector('[data-mobile-level="' + target + '"]');
+        if (main && sub) {
+          main.setAttribute('aria-hidden', 'true');
+          main.style.display = 'none';
+          sub.setAttribute('aria-hidden', 'false');
+        }
+      });
+    });
+
+    /* Back to main level */
+    mobileContainer.querySelectorAll('[data-mobile-back]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        resetMobileToMain();
+      });
+    });
+
+    /* ---- Close button ---- */
+    closeBtn.addEventListener('click', function () {
+      closeOverlay();
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+
+    /* ---- ESC key ---- */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) {
+        closeOverlay();
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "header-section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "force_dark",
+      "label": "Dark mode (transparent header)",
+      "default": true,
+      "info": "Enable for pages with a dark hero background. Disable for pages with light backgrounds."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header"
+    }
+  ]
+}
+{% endschema %}

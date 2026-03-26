@@ -1,0 +1,728 @@
+{%- comment -%}
+  Cart Drawer — JPAR Cosmetics
+  Slide-out panel from the right with overlay.
+  Rendered in theme.liquid, toggled via JS events.
+  Fetches /cart.js and renders items dynamically.
+  Dispatches "cart:updated" when items change.
+{%- endcomment -%}
+
+{%- comment -%} Overlay {%- endcomment -%}
+<div class="cart-drawer-overlay" data-cart-overlay aria-hidden="true"></div>
+
+{%- comment -%} Drawer panel {%- endcomment -%}
+<aside
+  class="cart-drawer"
+  data-cart-drawer
+  aria-label="Shopping cart"
+  aria-hidden="true"
+  role="dialog"
+>
+  {%- comment -%} ====== Header ====== {%- endcomment -%}
+  <div class="cart-drawer__header">
+    <div class="cart-drawer__header-text">
+      <h2 class="cart-drawer__title">Shopping Cart</h2>
+      <span class="cart-drawer__subtitle" data-cart-drawer-count>
+        {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}
+      </span>
+    </div>
+    <button
+      class="cart-drawer__close"
+      data-cart-close
+      aria-label="Close cart"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  {%- comment -%} ====== Body ====== {%- endcomment -%}
+  <div class="cart-drawer__body" data-cart-drawer-body>
+
+    {%- comment -%} Empty state (shown by default, hidden when cart has items) {%- endcomment -%}
+    <div class="cart-drawer__empty" data-cart-empty>
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <p class="cart-drawer__empty-text">Your cart is empty</p>
+      <a href="/collections/all" class="cart-drawer__empty-link" data-cart-close>
+        Continue Shopping
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    {%- comment -%} Items container (populated by JS) {%- endcomment -%}
+    <div class="cart-drawer__items" data-cart-items style="display: none;"></div>
+
+  </div>
+
+  {%- comment -%} ====== Footer ====== {%- endcomment -%}
+  <div class="cart-drawer__footer" data-cart-footer style="display: none;">
+    <div class="cart-drawer__subtotal">
+      <span class="cart-drawer__subtotal-label">Subtotal</span>
+      <span class="cart-drawer__subtotal-value" data-cart-subtotal>{{ cart.total_price | money }}</span>
+    </div>
+    <p class="cart-drawer__shipping-note">Shipping & taxes calculated at checkout</p>
+    <a
+      href="/checkout"
+      class="cart-drawer__checkout"
+      data-cart-checkout
+    >
+      Checkout
+    </a>
+  </div>
+</aside>
+
+{%- comment -%} ====== Item template (hidden, cloned by JS) ====== {%- endcomment -%}
+<template data-cart-item-template>
+  <div class="cart-drawer__item" data-cart-item data-line-key="">
+    <div class="cart-drawer__item-image">
+      <img src="" alt="" width="64" height="64" loading="lazy" data-item-image>
+    </div>
+    <div class="cart-drawer__item-details">
+      <div class="cart-drawer__item-top">
+        <div class="cart-drawer__item-meta">
+          <h3 class="cart-drawer__item-title" data-item-title></h3>
+          <span class="cart-drawer__item-variant" data-item-variant></span>
+        </div>
+        <button
+          class="cart-drawer__item-remove"
+          data-item-remove
+          aria-label="Remove item"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+        </button>
+      </div>
+      <div class="cart-drawer__item-bottom">
+        <div class="cart-drawer__item-qty">
+          <button class="cart-drawer__item-qty-btn" data-item-minus aria-label="Decrease quantity">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+          </button>
+          <span class="cart-drawer__item-qty-value" data-item-quantity>1</span>
+          <button class="cart-drawer__item-qty-btn" data-item-plus aria-label="Increase quantity">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          </button>
+        </div>
+        <span class="cart-drawer__item-price" data-item-price></span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+  /* ==============================
+     Cart Drawer — Overlay
+     ============================== */
+  .cart-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  .cart-drawer-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ==============================
+     Cart Drawer — Panel
+     ============================== */
+  .cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 91;
+    width: 100%;
+    max-width: 28rem;
+    background: var(--color-bg, #FFFFFF);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .cart-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  /* ==============================
+     Header
+     ============================== */
+  .cart-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border, #E8DEDE);
+    flex-shrink: 0;
+  }
+
+  .cart-drawer__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .cart-drawer__subtitle {
+    font-size: 0.8125rem;
+    color: var(--color-muted, #6B5E5E);
+    font-weight: 400;
+  }
+
+  .cart-drawer__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full, 9999px);
+    color: var(--color-fg, #2E1F1F);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .cart-drawer__close:hover {
+    background: var(--color-secondary-bg, #FAF5F5);
+  }
+
+  .cart-drawer__close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* ==============================
+     Body
+     ============================== */
+  .cart-drawer__body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+  }
+
+  .cart-drawer__body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .cart-drawer__body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .cart-drawer__body::-webkit-scrollbar-thumb {
+    background: var(--color-border, #E8DEDE);
+    border-radius: 2px;
+  }
+
+  /* ==============================
+     Empty State
+     ============================== */
+  .cart-drawer__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    gap: 1rem;
+    min-height: 300px;
+  }
+
+  .cart-drawer__empty svg {
+    color: var(--color-muted, #6B5E5E);
+    opacity: 0.3;
+  }
+
+  .cart-drawer__empty-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0;
+  }
+
+  .cart-drawer__empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary, #E02020);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .cart-drawer__empty-link:hover {
+    opacity: 0.8;
+  }
+
+  /* ==============================
+     Items
+     ============================== */
+  .cart-drawer__items {
+    padding: 0;
+  }
+
+  .cart-drawer__item {
+    display: flex;
+    gap: 0.875rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border, #E8DEDE);
+    transition: background-color 0.15s ease;
+  }
+
+  .cart-drawer__item:last-child {
+    border-bottom: none;
+  }
+
+  .cart-drawer__item--removing {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* Item image */
+  .cart-drawer__item-image {
+    width: 4rem;
+    height: 4rem;
+    flex-shrink: 0;
+    border-radius: var(--radius, 0.75rem);
+    overflow: hidden;
+    background: var(--color-secondary-bg, #FAF5F5);
+  }
+
+  .cart-drawer__item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Item details */
+  .cart-drawer__item-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cart-drawer__item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .cart-drawer__item-meta {
+    min-width: 0;
+  }
+
+  .cart-drawer__item-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .cart-drawer__item-variant {
+    font-size: 0.75rem;
+    color: var(--color-muted, #6B5E5E);
+    margin-top: 0.125rem;
+    display: block;
+  }
+
+  .cart-drawer__item-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    color: var(--color-muted, #6B5E5E);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm, 0.5rem);
+    transition: color 0.15s ease, background-color 0.15s ease;
+    padding: 0;
+  }
+
+  .cart-drawer__item-remove:hover {
+    color: var(--color-primary, #E02020);
+    background: var(--color-primary-10, rgba(224, 32, 32, 0.1));
+  }
+
+  .cart-drawer__item-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Quantity controls */
+  .cart-drawer__item-qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid var(--color-border, #E8DEDE);
+    border-radius: var(--radius-sm, 0.5rem);
+    overflow: hidden;
+  }
+
+  .cart-drawer__item-qty-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--color-fg, #2E1F1F);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.15s ease;
+  }
+
+  .cart-drawer__item-qty-btn:hover {
+    background: var(--color-secondary-bg, #FAF5F5);
+  }
+
+  .cart-drawer__item-qty-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-fg, #2E1F1F);
+    border-left: 1.5px solid var(--color-border, #E8DEDE);
+    border-right: 1.5px solid var(--color-border, #E8DEDE);
+    user-select: none;
+  }
+
+  /* Item price */
+  .cart-drawer__item-price {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  /* ==============================
+     Footer
+     ============================== */
+  .cart-drawer__footer {
+    flex-shrink: 0;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--color-border, #E8DEDE);
+    background: var(--color-bg, #FFFFFF);
+  }
+
+  .cart-drawer__subtotal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+  }
+
+  .cart-drawer__subtotal-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  .cart-drawer__subtotal-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  .cart-drawer__shipping-note {
+    font-size: 0.75rem;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0 0 1rem;
+  }
+
+  .cart-drawer__checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 3rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--color-primary, #E02020);
+    border: none;
+    border-radius: var(--radius-xl, 1.25rem);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+  }
+
+  .cart-drawer__checkout:hover {
+    background: var(--color-primary-hover, rgba(224, 32, 32, 0.9));
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+  }
+
+  .cart-drawer__checkout:active {
+    transform: translateY(0);
+  }
+
+  /* ==============================
+     Body scroll lock
+     ============================== */
+  body.cart-drawer-open {
+    overflow: hidden;
+  }
+</style>
+
+<script type="module">
+  (function () {
+    /* ---- DOM refs ---- */
+    var overlay = document.querySelector('[data-cart-overlay]');
+    var drawer = document.querySelector('[data-cart-drawer]');
+    var closeBtns = document.querySelectorAll('[data-cart-close]');
+    var itemsContainer = document.querySelector('[data-cart-items]');
+    var emptyState = document.querySelector('[data-cart-empty]');
+    var footerEl = document.querySelector('[data-cart-footer]');
+    var subtotalEl = document.querySelector('[data-cart-subtotal]');
+    var countEl = document.querySelector('[data-cart-drawer-count]');
+    var template = document.querySelector('[data-cart-item-template]');
+
+    if (!drawer || !overlay) return;
+
+    var isUpdating = false;
+
+    /* ---- Open / Close ---- */
+    function openDrawer() {
+      overlay.classList.add('is-open');
+      drawer.classList.add('is-open');
+      drawer.setAttribute('aria-hidden', 'false');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('cart-drawer-open');
+      fetchAndRender();
+    }
+
+    function closeDrawer() {
+      overlay.classList.remove('is-open');
+      drawer.classList.remove('is-open');
+      drawer.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('cart-drawer-open');
+    }
+
+    /* Close button(s) */
+    closeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        /* Only prevent default if it is a button, not a link */
+        if (btn.tagName === 'BUTTON') e.preventDefault();
+        closeDrawer();
+      });
+    });
+
+    /* Close on overlay click */
+    overlay.addEventListener('click', closeDrawer);
+
+    /* Close on ESC */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
+        closeDrawer();
+      }
+    });
+
+    /* ---- Events ---- */
+    document.addEventListener('cart:open', function () {
+      openDrawer();
+    });
+
+    document.addEventListener('cart:updated', function () {
+      fetchAndRender();
+      updateHeaderBadge();
+    });
+
+    /* Header cart button opens drawer */
+    var cartBtns = document.querySelectorAll('.header__cart-btn, [data-cart-toggle]');
+    cartBtns.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        openDrawer();
+      });
+    });
+
+    /* ---- Fetch cart and render ---- */
+    function fetchAndRender() {
+      fetch('/cart.js', {
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (cart) { renderCart(cart); })
+        .catch(function () { /* silently fail */ });
+    }
+
+    function renderCart(cart) {
+      var itemCount = cart.item_count || 0;
+
+      /* Update count text */
+      if (countEl) {
+        countEl.textContent = itemCount + ' ' + (itemCount === 1 ? 'item' : 'items');
+      }
+
+      /* Update subtotal */
+      if (subtotalEl) {
+        subtotalEl.textContent = formatMoney(cart.total_price);
+      }
+
+      /* Toggle empty vs items */
+      if (itemCount === 0) {
+        emptyState.style.display = '';
+        itemsContainer.style.display = 'none';
+        footerEl.style.display = 'none';
+      } else {
+        emptyState.style.display = 'none';
+        itemsContainer.style.display = '';
+        footerEl.style.display = '';
+      }
+
+      /* Render items */
+      itemsContainer.innerHTML = '';
+
+      if (!template) return;
+
+      cart.items.forEach(function (item) {
+        var clone = template.content.cloneNode(true);
+        var el = clone.querySelector('[data-cart-item]');
+
+        el.setAttribute('data-line-key', item.key);
+
+        /* Image */
+        var img = el.querySelector('[data-item-image]');
+        if (img && item.image) {
+          img.src = getSizedImageUrl(item.image, '128x128');
+          img.alt = item.product_title;
+        }
+
+        /* Title */
+        var title = el.querySelector('[data-item-title]');
+        if (title) title.textContent = item.product_title;
+
+        /* Variant */
+        var variant = el.querySelector('[data-item-variant]');
+        if (variant) {
+          variant.textContent = item.variant_title && item.variant_title !== 'Default Title'
+            ? item.variant_title
+            : '';
+        }
+
+        /* Price */
+        var price = el.querySelector('[data-item-price]');
+        if (price) price.textContent = formatMoney(item.final_line_price);
+
+        /* Quantity */
+        var qty = el.querySelector('[data-item-quantity]');
+        if (qty) qty.textContent = item.quantity;
+
+        /* Minus button */
+        var minusBtn = el.querySelector('[data-item-minus]');
+        if (minusBtn) {
+          minusBtn.addEventListener('click', function () {
+            var newQty = item.quantity - 1;
+            changeItemQuantity(item.key, newQty < 0 ? 0 : newQty);
+          });
+        }
+
+        /* Plus button */
+        var plusBtn = el.querySelector('[data-item-plus]');
+        if (plusBtn) {
+          plusBtn.addEventListener('click', function () {
+            changeItemQuantity(item.key, item.quantity + 1);
+          });
+        }
+
+        /* Remove button */
+        var removeBtn = el.querySelector('[data-item-remove]');
+        if (removeBtn) {
+          removeBtn.addEventListener('click', function () {
+            el.classList.add('cart-drawer__item--removing');
+            changeItemQuantity(item.key, 0);
+          });
+        }
+
+        itemsContainer.appendChild(clone);
+      });
+    }
+
+    /* ---- Change quantity ---- */
+    function changeItemQuantity(lineKey, newQuantity) {
+      if (isUpdating) return;
+      isUpdating = true;
+
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: lineKey, quantity: newQuantity })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (cart) {
+          isUpdating = false;
+          renderCart(cart);
+          updateHeaderBadge();
+          document.dispatchEvent(new CustomEvent('cart:updated'));
+        })
+        .catch(function () {
+          isUpdating = false;
+          fetchAndRender();
+        });
+    }
+
+    /* ---- Update header cart badge ---- */
+    function updateHeaderBadge() {
+      fetch('/cart.js', {
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (cart) {
+          var badges = document.querySelectorAll('[data-cart-count], .header__cart-badge');
+          badges.forEach(function (badge) {
+            if (cart.item_count > 0) {
+              badge.textContent = cart.item_count;
+              badge.style.display = '';
+            } else {
+              badge.style.display = 'none';
+            }
+          });
+        })
+        .catch(function () { /* silently fail */ });
+    }
+
+    /* ---- Helpers ---- */
+    function formatMoney(cents) {
+      var amount = (cents / 100).toFixed(2);
+      return '$' + amount;
+    }
+
+    function getSizedImageUrl(src, size) {
+      if (!src) return '';
+      /* Shopify image URL sizing: insert _SIZExSIZE before the extension */
+      var match = src.match(/^(.+)\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i);
+      if (match) {
+        return match[1] + '_' + size + '.' + match[2] + (match[3] || '');
+      }
+      return src;
+    }
+
+    /* ---- Initial badge update ---- */
+    updateHeaderBadge();
+  })();
+</script>

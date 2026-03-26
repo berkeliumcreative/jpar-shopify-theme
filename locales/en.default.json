@@ -1,0 +1,77 @@
+{
+  "general": {
+    "shop_now": "Shop Now",
+    "view_all": "View All Products",
+    "back_to_shop": "Back to Shop",
+    "back_to_blog": "Back to Blog",
+    "loading": "Loading...",
+    "no_products": "No products found",
+    "read_more": "Read More",
+    "search": "Search",
+    "close": "Close",
+    "menu": "Menu"
+  },
+  "products": {
+    "add_to_cart": "Add to Cart",
+    "sold_out": "Sold Out",
+    "quantity": "Quantity",
+    "description": "Description",
+    "added_to_cart": "Added to cart"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "items_count": {
+      "one": "{{ count }} item in your cart",
+      "other": "{{ count }} items in your cart"
+    },
+    "subtotal": "Subtotal",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "continue_shopping": "Continue Shopping"
+  },
+  "contact": {
+    "heading": "Get in Touch",
+    "subheading": "Have a question or feedback? We'd love to hear from you.",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Message sent! We'll get back to you as soon as possible.",
+    "email_label": "Email",
+    "phone_label": "Phone",
+    "address_label": "Address"
+  },
+  "newsletter": {
+    "placeholder": "Enter your email",
+    "success": "You're all set!",
+    "no_spam": "No spam, ever. Unsubscribe anytime."
+  },
+  "customer": {
+    "login": "Log In",
+    "register": "Create Account",
+    "logout": "Log Out",
+    "account": "My Account",
+    "orders": "Order History",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "no_orders": "You haven't placed any orders yet.",
+    "order_number": "Order",
+    "order_date": "Date",
+    "order_status": "Status",
+    "order_total": "Total"
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close_menu": "Close menu",
+    "open_menu": "Open menu",
+    "open_cart": "Open cart",
+    "close_cart": "Close cart"
+  }
+}

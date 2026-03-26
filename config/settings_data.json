@@ -1,0 +1,20 @@
+{
+  "current": {
+    "color_primary": "#E02020",
+    "color_primary_dark": "#B31A1A",
+    "color_background": "#FFFFFF",
+    "color_foreground": "#2E1F1F",
+    "color_muted": "#6B5E5E",
+    "color_border": "#E8DEDE",
+    "color_secondary_bg": "#FAF5F5",
+    "font_body_size": 16,
+    "cart_type": "drawer",
+    "popup_enabled": true,
+    "popup_delay": 10,
+    "popup_heading": "Get 10% Off",
+    "popup_text": "Subscribe to our newsletter and get an exclusive discount on your first order!",
+    "popup_button_text": "Get My Discount",
+    "sections": {},
+    "content_for_index": []
+  }
+}

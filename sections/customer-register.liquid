@@ -1,0 +1,230 @@
+{% comment %}
+  Customer Register Section
+  First name, last name, email, password fields with link to login.
+  Uses Shopify's native {% form 'create_customer' %}.
+{% endcomment %}
+
+<section
+  id="customer-register-{{ section.id }}"
+  class="customer-page"
+  data-section-id="{{ section.id }}"
+  data-section-type="customer-register"
+>
+  <div class="customer-register__container page-width">
+    <div class="customer-register__card">
+      <h1 class="customer-register__title">{{ 'customer.register' | t }}</h1>
+
+      {% form 'create_customer' %}
+        {%- if form.errors -%}
+          <div class="customer-register__errors form-errors" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="customer-register__name-row">
+          <div class="form-group">
+            <label for="register-first-name" class="form-label">{{ 'customer.first_name' | t }}</label>
+            <input
+              type="text"
+              id="register-first-name"
+              name="customer[first_name]"
+              class="form-input"
+              autocomplete="given-name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="register-last-name" class="form-label">{{ 'customer.last_name' | t }}</label>
+            <input
+              type="text"
+              id="register-last-name"
+              name="customer[last_name]"
+              class="form-input"
+              autocomplete="family-name"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-email" class="form-label">{{ 'customer.email' | t }}</label>
+          <input
+            type="email"
+            id="register-email"
+            name="customer[email]"
+            class="form-input"
+            autocomplete="email"
+            autocapitalize="off"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="register-password" class="form-label">{{ 'customer.password' | t }}</label>
+          <input
+            type="password"
+            id="register-password"
+            name="customer[password]"
+            class="form-input"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn-primary customer-register__submit">
+          {{ 'customer.register' | t }}
+        </button>
+      {% endform %}
+
+      <div class="customer-register__links">
+        <span class="customer-register__helper">Already have an account?</span>
+        <a href="{{ routes.account_login_url }}" class="customer-register__link">
+          {{ 'customer.login' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #customer-register-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: 6rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  #customer-register-{{ section.id }} .customer-register__container {
+    width: 100%;
+    max-width: 28rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  #customer-register-{{ section.id }} .customer-register__card {
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 1rem;
+    padding: 2.5rem;
+  }
+
+  #customer-register-{{ section.id }} .customer-register__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-foreground, #1a1a1a);
+    margin: 0 0 1.5rem;
+    text-align: center;
+  }
+
+  /* Name row — side by side on desktop */
+  #customer-register-{{ section.id }} .customer-register__name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media screen and (max-width: 480px) {
+    #customer-register-{{ section.id }} .customer-register__name-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Form elements */
+  #customer-register-{{ section.id }} .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  #customer-register-{{ section.id }} .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-foreground, #1a1a1a);
+    margin-bottom: 0.375rem;
+  }
+
+  #customer-register-{{ section.id }} .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--color-foreground, #1a1a1a);
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 0.5rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  #customer-register-{{ section.id }} .form-input:focus {
+    border-color: var(--color-primary, #c8102e);
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+  }
+
+  #customer-register-{{ section.id }} .btn-primary {
+    display: block;
+    width: 100%;
+    background-color: var(--color-primary, #c8102e);
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 0.625rem;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-top: 1.5rem;
+  }
+
+  #customer-register-{{ section.id }} .btn-primary:hover {
+    background-color: var(--color-primary-hover, #a50d26);
+    transform: translateY(-1px);
+  }
+
+  /* Links */
+  #customer-register-{{ section.id }} .customer-register__links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 1.5rem;
+  }
+
+  #customer-register-{{ section.id }} .customer-register__helper {
+    font-size: 0.8125rem;
+    color: var(--color-foreground-muted, #6b7280);
+  }
+
+  #customer-register-{{ section.id }} .customer-register__link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary, #c8102e);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  #customer-register-{{ section.id }} .customer-register__link:hover {
+    text-decoration: underline;
+  }
+
+  /* Errors */
+  #customer-register-{{ section.id }} .form-errors {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Customer Register",
+  "tag": "section",
+  "class": "section-customer-register",
+  "limit": 1
+}
+{% endschema %}

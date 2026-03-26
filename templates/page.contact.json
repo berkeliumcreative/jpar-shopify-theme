@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "contact_form": {
+      "type": "contact-form",
+      "settings": {}
+    }
+  },
+  "order": ["contact_form"]
+}

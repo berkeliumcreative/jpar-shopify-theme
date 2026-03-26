@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "story_sections": {
+      "type": "story-sections",
+      "settings": {}
+    },
+    "story_values": {
+      "type": "story-values",
+      "settings": {}
+    }
+  },
+  "order": ["story_sections", "story_values"]
+}

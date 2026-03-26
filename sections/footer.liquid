@@ -1,0 +1,264 @@
+{% comment %}
+  Footer Section — JPAR Cosmetics
+  Compact single-row footer: Logo + socials | Nav links | Copyright.
+  Stacks vertically centered on mobile.
+  Red background (--color-primary), white text throughout.
+{% endcomment %}
+
+<footer class="footer" data-section-id="{{ section.id }}" data-section-type="footer">
+  <div class="footer__inner">
+    {%- comment -%} Left: Logo + Social Icons {%- endcomment -%}
+    <div class="footer__brand">
+      <a href="/" class="footer__logo" aria-label="{{ shop.name }} - Home">
+        <img
+          src="{{ 'jpar-logo.png' | asset_url }}"
+          alt="{{ shop.name }}"
+          width="100"
+          height="32"
+          loading="lazy"
+        >
+      </a>
+
+      <div class="footer__socials">
+        {%- if settings.social_instagram_link != blank -%}
+          <a
+            href="{{ settings.social_instagram_link }}"
+            class="footer__social-link"
+            aria-label="Instagram"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {% render 'icon-svg', icon: 'instagram' %}
+          </a>
+        {%- endif -%}
+
+        {%- if settings.social_facebook_link != blank -%}
+          <a
+            href="{{ settings.social_facebook_link }}"
+            class="footer__social-link"
+            aria-label="Facebook"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {% render 'icon-svg', icon: 'facebook' %}
+          </a>
+        {%- endif -%}
+
+        {%- if settings.social_twitter_link != blank -%}
+          <a
+            href="{{ settings.social_twitter_link }}"
+            class="footer__social-link"
+            aria-label="Twitter"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {% render 'icon-svg', icon: 'twitter' %}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Center: Nav Links {%- endcomment -%}
+    <nav class="footer__nav" aria-label="Footer navigation">
+      <ul class="footer__nav-list">
+        {%- if linklists['footer'].links.size > 0 -%}
+          {%- for link in linklists['footer'].links -%}
+            <li>
+              <a href="{{ link.url }}" class="footer__nav-link">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Fallback links when no footer linklist exists {%- endcomment -%}
+          <li><a href="/collections/all" class="footer__nav-link">Shop</a></li>
+          <li><a href="/pages/our-story" class="footer__nav-link">Story</a></li>
+          <li><a href="/blogs/journal" class="footer__nav-link">Blog</a></li>
+          <li><a href="/pages/contact" class="footer__nav-link">Contact</a></li>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'custom_link' -%}
+            <li {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.link }}" class="footer__nav-link">
+                {{ block.settings.label }}
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    {%- comment -%} Right: Copyright {%- endcomment -%}
+    <div class="footer__copyright">
+      <p>&copy; {{ 'now' | date: '%Y' }} jpar Cosmetics</p>
+    </div>
+  </div>
+</footer>
+
+{% stylesheet %}
+  /* ==============================
+     Footer — Base
+     ============================== */
+  .footer {
+    background: var(--color-primary, hsl(0, 75%, 50%));
+    color: #fff;
+    padding: 32px 24px;
+  }
+
+  @media (min-width: 768px) {
+    .footer {
+      padding: 28px 48px;
+    }
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 1440px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+      gap: 32px;
+    }
+  }
+
+  /* ==============================
+     Brand: Logo + Social icons
+     ============================== */
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .footer__brand {
+      flex-direction: row;
+      gap: 20px;
+      align-items: center;
+    }
+  }
+
+  .footer__logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .footer__logo img {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .footer__socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer__social-link:hover {
+    opacity: 0.7;
+  }
+
+  .footer__social-link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ==============================
+     Nav links
+     ============================== */
+  .footer__nav-list {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer__nav-link {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer__nav-link:hover {
+    opacity: 0.7;
+  }
+
+  /* ==============================
+     Copyright
+     ============================== */
+  .footer__copyright {
+    flex-shrink: 0;
+  }
+
+  .footer__copyright p {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.7;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "footer-section",
+  "tag": "section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "custom_link",
+      "name": "Custom Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Link"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer"
+    }
+  ]
+}
+{% endschema %}

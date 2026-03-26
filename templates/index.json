@@ -1,0 +1,72 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-lamp",
+      "settings": {
+        "typewriter_words": "Clean Beauty\nRadiant Skin\nLuxury Skincare\nNatural Glow",
+        "button_text": "Shop Now",
+        "button_link": "/collections/all"
+      }
+    },
+    "marquee": {
+      "type": "marquee-banner",
+      "settings": {}
+    },
+    "featured_products": {
+      "type": "featured-products",
+      "settings": {
+        "label_text": "CURATED COLLECTION",
+        "heading": "Our Products",
+        "subheading": "Discover luxury beauty essentials crafted with clean, natural ingredients.",
+        "collection": "",
+        "products_limit": 16,
+        "button_text": "View All Products"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "label_text": "Testimonials",
+        "heading": "What Our Customers Say"
+      },
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "name": "Sarah M.",
+            "quote": "I've tried countless skincare brands, but JPAR is in a league of its own. The natural ingredients make my skin feel incredible, and I love knowing everything is clean and cruelty-free.",
+            "rating": 5
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "name": "Jessica L.",
+            "quote": "The luxury feel without the harsh chemicals — that's what won me over. My sensitive skin finally has a brand it loves. The packaging is gorgeous too!",
+            "rating": 5
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "name": "Amanda K.",
+            "quote": "From the moment I opened my first order, I knew this was special. The textures, the scents, the results — everything about JPAR feels premium and intentional.",
+            "rating": 5
+          }
+        }
+      },
+      "block_order": ["testimonial_1", "testimonial_2", "testimonial_3"]
+    },
+    "brand_promise": {
+      "type": "brand-promise",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "marquee",
+    "featured_products",
+    "testimonials",
+    "brand_promise"
+  ]
+}

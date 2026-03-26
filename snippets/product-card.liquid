@@ -1,0 +1,99 @@
+{%- comment -%}
+  Renders a product card for use in grids on homepage and collection pages.
+  Usage: {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+<a href="{{ product.url }}" class="product-card" aria-label="{{ product.title }}">
+  <div class="product-card-image">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 600 }}"
+        srcset="
+          {{ product.featured_image | image_url: width: 200 }} 200w,
+          {{ product.featured_image | image_url: width: 400 }} 400w,
+          {{ product.featured_image | image_url: width: 600 }} 600w,
+          {{ product.featured_image | image_url: width: 800 }} 800w
+        "
+        sizes="(max-width: 600px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        loading="lazy"
+        alt="{{ product.featured_image.alt | escape | default: product.title | escape }}"
+        width="{{ product.featured_image.width }}"
+        height="{{ product.featured_image.height }}"
+      >
+    {%- else -%}
+      <span class="product-card-no-image">No image</span>
+    {%- endif -%}
+  </div>
+
+  <h3 class="product-card-title">{{ product.title }}</h3>
+
+  <div class="product-card-footer">
+    <span class="product-card-price">{{ product.price | money }}</span>
+
+    <form
+      method="post"
+      action="/cart/add"
+      data-product-card-form
+      onclick="event.stopPropagation();"
+    >
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+
+      <button
+        type="submit"
+        class="product-card-atc"
+        aria-label="Add {{ product.title | escape }} to cart"
+        {%- unless product.available %} disabled{% endunless %}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</a>
+
+<script type="module">
+  (function () {
+    document.querySelectorAll('[data-product-card-form]').forEach(function (form) {
+      if (form.dataset.ajaxBound) return;
+      form.dataset.ajaxBound = 'true';
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var button = form.querySelector('.product-card-atc');
+        if (button.disabled) return;
+
+        button.disabled = true;
+
+        var formData = {
+          items: [{
+            id: parseInt(form.querySelector('input[name="id"]').value, 10),
+            quantity: parseInt(form.querySelector('input[name="quantity"]').value, 10)
+          }]
+        };
+
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Add to cart failed');
+            return response.json();
+          })
+          .then(function () {
+            button.disabled = false;
+            document.dispatchEvent(new CustomEvent('cart:updated'));
+          })
+          .catch(function () {
+            button.disabled = false;
+          });
+      });
+    });
+  })();
+</script>

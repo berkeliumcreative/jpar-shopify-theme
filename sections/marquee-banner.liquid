@@ -1,0 +1,183 @@
+{% comment %}
+  Marquee Banner Section
+  Infinitely scrolling trust badges on a primary-colored background.
+  Pure CSS animation — no JavaScript required.
+{% endcomment %}
+
+{%- liquid
+  assign default_items = 'Free Shipping on Orders $50+,Clean & Cruelty-Free,30-Day Returns,Sustainable Packaging' | split: ','
+  assign has_blocks = false
+  if section.blocks.size > 0
+    assign has_blocks = true
+  endif
+-%}
+
+<section
+  id="marquee-banner-{{ section.id }}"
+  class="marquee-banner"
+  data-section-id="{{ section.id }}"
+  data-section-type="marquee-banner"
+  aria-label="Trust badges"
+>
+  <div class="marquee-banner__inner">
+    <div class="marquee-banner__track" aria-hidden="false">
+      {%- comment -%} Render content 4x for seamless infinite scroll {%- endcomment -%}
+      {%- for i in (1..4) -%}
+        {%- if has_blocks -%}
+          {%- for block in section.blocks -%}
+            <span class="marquee-banner__item" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </span>
+            <span class="marquee-banner__separator" aria-hidden="true">&#10022;</span>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for item in default_items -%}
+            <span class="marquee-banner__item">
+              {{ item | strip | escape }}
+            </span>
+            <span class="marquee-banner__separator" aria-hidden="true">&#10022;</span>
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #marquee-banner-{{ section.id }} {
+    background-color: var(--color-primary, #c8102e);
+    color: #ffffff;
+    padding: 0.5rem 0;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    #marquee-banner-{{ section.id }} {
+      padding: 0.75rem 0;
+    }
+  }
+
+  #marquee-banner-{{ section.id }} .marquee-banner__inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+  }
+
+  #marquee-banner-{{ section.id }} .marquee-banner__track {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: marquee-scroll-{{ section.id }} 25s linear infinite;
+    will-change: transform;
+  }
+
+  #marquee-banner-{{ section.id }} .marquee-banner__item {
+    display: inline-block;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  #marquee-banner-{{ section.id }} .marquee-banner__separator {
+    display: inline-block;
+    font-size: 0.625rem;
+    opacity: 0.6;
+    line-height: 1;
+  }
+
+  @keyframes marquee-scroll-{{ section.id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-25%);
+    }
+  }
+
+  /* Pause on hover for accessibility */
+  @media (hover: hover) {
+    #marquee-banner-{{ section.id }}:hover .marquee-banner__track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    #marquee-banner-{{ section.id }} .marquee-banner__track {
+      animation: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Marquee Banner",
+  "tag": "section",
+  "class": "section-marquee-banner",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Marquee Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free Shipping on Orders $50+"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee Banner",
+      "blocks": [
+        {
+          "type": "text",
+          "settings": {
+            "text": "Free Shipping on Orders $50+"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "Clean & Cruelty-Free"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "30-Day Returns"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "text": "Sustainable Packaging"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

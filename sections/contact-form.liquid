@@ -1,0 +1,692 @@
+{% comment %}
+  Contact Form Section — JPAR Cosmetics
+  Full contact page: header, 3 info cards (email, phone, address),
+  two-column layout with Shopify contact form + FAQ accordion.
+  Matches React Contact page layout and styling.
+{% endcomment %}
+
+{%- liquid
+  assign label = section.settings.label | default: 'Reach Out'
+  assign heading = section.settings.heading | default: 'Get in Touch'
+  assign heading_highlight = section.settings.heading_highlight | default: 'Touch'
+  assign subtitle = section.settings.subtitle | default: "We'd love to hear from you. Whether you have a question about our products, need skincare advice, or just want to say hello — we're here for you."
+  assign form_heading = section.settings.form_heading | default: 'Send a Message'
+  assign faq_heading = section.settings.faq_heading | default: 'Common Questions'
+-%}
+
+<section
+  id="contact-form-{{ section.id }}"
+  class="contact-form-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="contact-form"
+>
+  <div class="contact-form__container container">
+    {%- comment -%} Page header {%- endcomment -%}
+    <div class="contact-form__header">
+      {%- if label != blank -%}
+        <span class="contact-form__label section-label">
+          {{ label | escape }}
+        </span>
+      {%- endif -%}
+
+      <h1 class="contact-form__title">
+        {%- assign title_words = heading | split: ' ' -%}
+        {%- for word in title_words -%}
+          {%- if word == heading_highlight -%}
+            <span class="text-gradient-rose">{{ word | escape }}</span>
+          {%- else -%}
+            {{ word | escape }}
+          {%- endif -%}
+          {%- unless forloop.last %} {% endunless -%}
+        {%- endfor -%}
+      </h1>
+
+      {%- if subtitle != blank -%}
+        <p class="contact-form__subtitle section-desc">
+          {{ subtitle | escape }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Contact info cards (3 columns) {%- endcomment -%}
+    <div class="contact-form__info-grid">
+      {%- assign info_blocks_exist = false -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'contact_info' -%}
+          {%- assign info_blocks_exist = true -%}
+          {%- liquid
+            assign info_icon = block.settings.icon | default: 'mail'
+            assign info_title = block.settings.title | default: 'Contact'
+            assign info_value = block.settings.value
+            assign info_href = block.settings.href
+          -%}
+
+          <div class="contact-form__info-card" {{ block.shopify_attributes }}>
+            <div class="contact-form__info-icon" aria-hidden="true">
+              {% render 'icon-svg', icon: info_icon %}
+            </div>
+            <h3 class="contact-form__info-title">{{ info_title | escape }}</h3>
+            {%- if info_href != blank -%}
+              <a href="{{ info_href }}" class="contact-form__info-value contact-form__info-link">
+                {{ info_value | escape }}
+              </a>
+            {%- else -%}
+              <p class="contact-form__info-value">{{ info_value | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- unless info_blocks_exist -%}
+        {%- comment -%} Default info cards {%- endcomment -%}
+        <div class="contact-form__info-card">
+          <div class="contact-form__info-icon" aria-hidden="true">
+            {% render 'icon-svg', icon: 'mail' %}
+          </div>
+          <h3 class="contact-form__info-title">Email</h3>
+          <a href="mailto:hello@jparcosmetics.com" class="contact-form__info-value contact-form__info-link">
+            hello@jparcosmetics.com
+          </a>
+        </div>
+        <div class="contact-form__info-card">
+          <div class="contact-form__info-icon" aria-hidden="true">
+            {% render 'icon-svg', icon: 'phone' %}
+          </div>
+          <h3 class="contact-form__info-title">Phone</h3>
+          <a href="tel:+15551234567" class="contact-form__info-value contact-form__info-link">
+            +1 (555) 123-4567
+          </a>
+        </div>
+        <div class="contact-form__info-card">
+          <div class="contact-form__info-icon" aria-hidden="true">
+            {% render 'icon-svg', icon: 'map-pin' %}
+          </div>
+          <h3 class="contact-form__info-title">Address</h3>
+          <p class="contact-form__info-value">
+            123 Beauty Lane, Los Angeles, CA 90001
+          </p>
+        </div>
+      {%- endunless -%}
+    </div>
+
+    {%- comment -%} Two-column: Form + FAQ {%- endcomment -%}
+    <div class="contact-form__body">
+      {%- comment -%} Left: Contact form {%- endcomment -%}
+      <div class="contact-form__form-col">
+        <h2 class="contact-form__section-heading">{{ form_heading | escape }}</h2>
+
+        {%- form 'contact' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="contact-form__success" role="alert">
+              <p>Thank you for your message! We'll get back to you soon.</p>
+            </div>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="contact-form__errors" role="alert">
+              {{ form.errors | default_errors }}
+            </div>
+          {%- endif -%}
+
+          <div class="contact-form__row">
+            <div class="contact-form__field">
+              <label for="contact-name-{{ section.id }}" class="contact-form__field-label">Name</label>
+              <input
+                type="text"
+                id="contact-name-{{ section.id }}"
+                name="contact[name]"
+                placeholder="Your name"
+                required
+                class="contact-form__input"
+                autocomplete="name"
+              >
+            </div>
+            <div class="contact-form__field">
+              <label for="contact-email-{{ section.id }}" class="contact-form__field-label">Email</label>
+              <input
+                type="email"
+                id="contact-email-{{ section.id }}"
+                name="contact[email]"
+                placeholder="your@email.com"
+                required
+                class="contact-form__input"
+                autocomplete="email"
+              >
+            </div>
+          </div>
+
+          <div class="contact-form__field">
+            <label for="contact-subject-{{ section.id }}" class="contact-form__field-label">Subject</label>
+            <input
+              type="text"
+              id="contact-subject-{{ section.id }}"
+              name="contact[subject]"
+              placeholder="How can we help?"
+              class="contact-form__input"
+            >
+          </div>
+
+          <div class="contact-form__field">
+            <label for="contact-message-{{ section.id }}" class="contact-form__field-label">Message</label>
+            <textarea
+              id="contact-message-{{ section.id }}"
+              name="contact[body]"
+              placeholder="Tell us more..."
+              rows="5"
+              required
+              class="contact-form__textarea"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="contact-form__submit btn btn-primary btn-lg w-full">
+            Send Message
+          </button>
+        {%- endform -%}
+      </div>
+
+      {%- comment -%} Right: FAQ accordion {%- endcomment -%}
+      <div class="contact-form__faq-col">
+        <h2 class="contact-form__section-heading">{{ faq_heading | escape }}</h2>
+
+        <div class="contact-form__faq-list">
+          {%- assign faq_blocks_exist = false -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'faq' -%}
+              {%- assign faq_blocks_exist = true -%}
+              <details class="contact-form__faq-item" {{ block.shopify_attributes }}>
+                <summary class="contact-form__faq-question">
+                  <span>{{ block.settings.question | escape }}</span>
+                  <span class="contact-form__faq-chevron" aria-hidden="true">
+                    {% render 'icon-svg', icon: 'chevron-down' %}
+                  </span>
+                </summary>
+                <div class="contact-form__faq-answer">
+                  <p>{{ block.settings.answer | escape }}</p>
+                </div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- unless faq_blocks_exist -%}
+            {%- comment -%} Default FAQs {%- endcomment -%}
+            <details class="contact-form__faq-item">
+              <summary class="contact-form__faq-question">
+                <span>How long does shipping take?</span>
+                <span class="contact-form__faq-chevron" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-down' %}</span>
+              </summary>
+              <div class="contact-form__faq-answer">
+                <p>Standard shipping takes 3-5 business days within the US. Express shipping (1-2 business days) is available at checkout.</p>
+              </div>
+            </details>
+            <details class="contact-form__faq-item">
+              <summary class="contact-form__faq-question">
+                <span>What is your return policy?</span>
+                <span class="contact-form__faq-chevron" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-down' %}</span>
+              </summary>
+              <div class="contact-form__faq-answer">
+                <p>We offer a 30-day return policy for all unused and unopened products. Contact us to initiate a return.</p>
+              </div>
+            </details>
+            <details class="contact-form__faq-item">
+              <summary class="contact-form__faq-question">
+                <span>Are your products cruelty-free?</span>
+                <span class="contact-form__faq-chevron" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-down' %}</span>
+              </summary>
+              <div class="contact-form__faq-answer">
+                <p>Yes! All JPAR products are 100% cruelty-free. We never test on animals and neither do our suppliers.</p>
+              </div>
+            </details>
+            <details class="contact-form__faq-item">
+              <summary class="contact-form__faq-question">
+                <span>Do you ship internationally?</span>
+                <span class="contact-form__faq-chevron" aria-hidden="true">{% render 'icon-svg', icon: 'chevron-down' %}</span>
+              </summary>
+              <div class="contact-form__faq-answer">
+                <p>Currently we ship within the US and Canada. International shipping is coming soon. Join our newsletter for updates.</p>
+              </div>
+            </details>
+          {%- endunless -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Section wrapper ────────────────────────────────────── */
+  #contact-form-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: var(--space-24, 6rem);
+  }
+
+  /* ── Page header ────────────────────────────────────────── */
+  #contact-form-{{ section.id }} .contact-form__header {
+    text-align: center;
+    margin-bottom: var(--space-12, 3rem);
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__label {
+    display: inline-block;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__subtitle {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin: 0 auto;
+  }
+
+  /* ── Info cards grid ────────────────────────────────────── */
+  #contact-form-{{ section.id }} .contact-form__info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-16, 4rem);
+  }
+
+  @media screen and (min-width: 768px) {
+    #contact-form-{{ section.id }} .contact-form__info-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-card {
+    text-align: center;
+    padding: var(--space-8, 2rem) var(--space-6, 1.5rem);
+    background-color: var(--color-card, #ffffff);
+    border: 1px solid var(--color-border, #E8DEDE);
+    border-radius: var(--radius-lg, 1rem);
+    transition: box-shadow var(--transition, 300ms ease), transform var(--transition, 300ms ease);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-card:hover {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.1));
+    transform: translateY(-2px);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full, 9999px);
+    background-color: var(--color-primary-10, rgba(224, 32, 32, 0.1));
+    color: var(--color-primary, #E02020);
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-1, 0.25rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-value {
+    font-size: 0.875rem;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-link {
+    text-decoration: none;
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__info-link:hover {
+    color: var(--color-primary, #E02020);
+  }
+
+  /* ── Two-column body ────────────────────────────────────── */
+  #contact-form-{{ section.id }} .contact-form__body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12, 3rem);
+  }
+
+  @media screen and (min-width: 768px) {
+    #contact-form-{{ section.id }} .contact-form__body {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16, 4rem);
+    }
+  }
+
+  #contact-form-{{ section.id }} .contact-form__section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-6, 1.5rem);
+  }
+
+  /* ── Form ───────────────────────────────────────────────── */
+  #contact-form-{{ section.id }} .contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4, 1rem);
+    margin-bottom: var(--space-4, 1rem);
+  }
+
+  @media screen and (min-width: 640px) {
+    #contact-form-{{ section.id }} .contact-form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  #contact-form-{{ section.id }} .contact-form__field {
+    margin-bottom: var(--space-4, 1rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__field-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-fg, #2E1F1F);
+    margin-bottom: var(--space-2, 0.5rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__input,
+  #contact-form-{{ section.id }} .contact-form__textarea {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-fg, #2E1F1F);
+    background-color: var(--color-bg, #ffffff);
+    border: 1px solid var(--color-border, #E8DEDE);
+    border-radius: var(--radius, 0.75rem);
+    transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__input::placeholder,
+  #contact-form-{{ section.id }} .contact-form__textarea::placeholder {
+    color: var(--color-muted, #6B5E5E);
+    opacity: 0.6;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__input:focus,
+  #contact-form-{{ section.id }} .contact-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-primary, #E02020);
+    box-shadow: 0 0 0 3px var(--color-primary-10, rgba(224, 32, 32, 0.1));
+  }
+
+  #contact-form-{{ section.id }} .contact-form__textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__submit {
+    margin-top: var(--space-2, 0.5rem);
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius, 0.75rem);
+  }
+
+  /* Success / Error messages */
+  #contact-form-{{ section.id }} .contact-form__success {
+    padding: var(--space-4, 1rem);
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius, 0.75rem);
+    color: #166534;
+    margin-bottom: var(--space-4, 1rem);
+    font-size: 0.9375rem;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__errors {
+    padding: var(--space-4, 1rem);
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius, 0.75rem);
+    color: #991b1b;
+    margin-bottom: var(--space-4, 1rem);
+    font-size: 0.9375rem;
+  }
+
+  /* ── FAQ Accordion ──────────────────────────────────────── */
+  #contact-form-{{ section.id }} .contact-form__faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-item {
+    border-bottom: 1px solid var(--color-border, #E8DEDE);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-item:first-child {
+    border-top: 1px solid var(--color-border, #E8DEDE);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4, 1rem);
+    padding: var(--space-4, 1rem) 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-fg, #2E1F1F);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-question::-webkit-details-marker {
+    display: none;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-chevron {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--color-muted, #6B5E5E);
+    transition: transform var(--transition, 300ms ease);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-chevron svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-item[open] .contact-form__faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-answer {
+    padding-bottom: var(--space-4, 1rem);
+  }
+
+  #contact-form-{{ section.id }} .contact-form__faq-answer p {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Contact Form",
+  "tag": "section",
+  "class": "section-contact-form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "Reach Out"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Gradient Word",
+      "info": "Which word in the heading should have the gradient effect.",
+      "default": "Touch"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We'd love to hear from you. Whether you have a question about our products, need skincare advice, or just want to say hello — we're here for you."
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form Heading",
+      "default": "Send a Message"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ Heading",
+      "default": "Common Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "contact_info",
+      "name": "Contact Info",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "mail", "label": "Email" },
+            { "value": "phone", "label": "Phone" },
+            { "value": "map-pin", "label": "Location" }
+          ],
+          "default": "mail"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Email"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "hello@jparcosmetics.com"
+        },
+        {
+          "type": "text",
+          "id": "href",
+          "label": "Link (optional)",
+          "info": "e.g. mailto:hello@jparcosmetics.com or tel:+15551234567",
+          "default": "mailto:hello@jparcosmetics.com"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "We offer a 30-day return policy for all unused and unopened products."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Form",
+      "blocks": [
+        {
+          "type": "contact_info",
+          "settings": {
+            "icon": "mail",
+            "title": "Email",
+            "value": "hello@jparcosmetics.com",
+            "href": "mailto:hello@jparcosmetics.com"
+          }
+        },
+        {
+          "type": "contact_info",
+          "settings": {
+            "icon": "phone",
+            "title": "Phone",
+            "value": "+1 (555) 123-4567",
+            "href": "tel:+15551234567"
+          }
+        },
+        {
+          "type": "contact_info",
+          "settings": {
+            "icon": "map-pin",
+            "title": "Address",
+            "value": "123 Beauty Lane, Los Angeles, CA 90001",
+            "href": ""
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "Standard shipping takes 3-5 business days within the US. Express shipping (1-2 business days) is available at checkout."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "We offer a 30-day return policy for all unused and unopened products. Contact us to initiate a return."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Are your products cruelty-free?",
+            "answer": "Yes! All JPAR products are 100% cruelty-free. We never test on animals and neither do our suppliers."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "Currently we ship within the US and Canada. International shipping is coming soon. Join our newsletter for updates."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

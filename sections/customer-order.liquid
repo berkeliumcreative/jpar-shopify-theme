@@ -1,0 +1,321 @@
+{% comment %}
+  Customer Order Section
+  Single order detail view with line items, shipping/billing addresses, and totals.
+{% endcomment %}
+
+<section
+  id="customer-order-{{ section.id }}"
+  class="customer-page"
+  data-section-id="{{ section.id }}"
+  data-section-type="customer-order"
+>
+  <div class="customer-order__container page-width">
+    {%- comment -%} Header {%- endcomment -%}
+    <div class="customer-order__header">
+      <a href="{{ routes.account_url }}" class="customer-order__back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        {{ 'customer.account' | t }}
+      </a>
+      <h1 class="customer-order__title">{{ 'customer.order_number' | t }} {{ order.name }}</h1>
+      <p class="customer-order__meta">
+        {{ order.created_at | date: "%B %d, %Y" }}
+        &middot;
+        <span class="customer-order__status customer-order__status--{{ order.financial_status }}">
+          {{ order.financial_status_label }}
+        </span>
+      </p>
+    </div>
+
+    {%- comment -%} Line items {%- endcomment -%}
+    <div class="customer-order__items">
+      <div class="customer-order__table-wrap">
+        <table class="customer-order__table">
+          <thead>
+            <tr>
+              <th colspan="2">Product</th>
+              <th>Price</th>
+              <th>{{ 'products.quantity' | t }}</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for line_item in order.line_items -%}
+              <tr>
+                <td class="customer-order__cell--image">
+                  {%- if line_item.image -%}
+                    <img
+                      src="{{ line_item.image | image_url: width: 120 }}"
+                      alt="{{ line_item.image.alt | default: line_item.title | escape }}"
+                      width="60"
+                      height="60"
+                      loading="lazy"
+                      class="customer-order__image"
+                    >
+                  {%- endif -%}
+                </td>
+                <td>
+                  <span class="customer-order__item-title">{{ line_item.title | escape }}</span>
+                  {%- if line_item.variant.title != 'Default Title' -%}
+                    <span class="customer-order__item-variant">{{ line_item.variant.title | escape }}</span>
+                  {%- endif -%}
+                </td>
+                <td>{{ line_item.original_price | money }}</td>
+                <td>{{ line_item.quantity }}</td>
+                <td>{{ line_item.final_line_price | money }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {%- comment -%} Totals + Addresses {%- endcomment -%}
+    <div class="customer-order__footer-grid">
+      {%- comment -%} Addresses {%- endcomment -%}
+      <div class="customer-order__addresses">
+        {%- if order.shipping_address -%}
+          <div class="customer-order__address-block">
+            <h3 class="customer-order__address-title">Shipping Address</h3>
+            <address class="customer-order__address">
+              {{ order.shipping_address | format_address }}
+            </address>
+          </div>
+        {%- endif -%}
+
+        {%- if order.billing_address -%}
+          <div class="customer-order__address-block">
+            <h3 class="customer-order__address-title">Billing Address</h3>
+            <address class="customer-order__address">
+              {{ order.billing_address | format_address }}
+            </address>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Totals {%- endcomment -%}
+      <div class="customer-order__totals">
+        <div class="customer-order__totals-row">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <span>{{ order.line_items_subtotal_price | money }}</span>
+        </div>
+
+        {%- for discount_application in order.discount_applications -%}
+          <div class="customer-order__totals-row customer-order__totals-row--discount">
+            <span>Discount ({{ discount_application.title }})</span>
+            <span>-{{ discount_application.total_allocated_amount | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        {%- for shipping_method in order.shipping_methods -%}
+          <div class="customer-order__totals-row">
+            <span>Shipping ({{ shipping_method.title }})</span>
+            <span>{{ shipping_method.price | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        {%- for tax_line in order.tax_lines -%}
+          <div class="customer-order__totals-row">
+            <span>Tax ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</span>
+            <span>{{ tax_line.price | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        <div class="customer-order__totals-row customer-order__totals-row--total">
+          <span>Total</span>
+          <span>{{ order.total_price | money }} {{ order.currency }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #customer-order-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: 6rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 56rem;
+  }
+
+  /* Header */
+  #customer-order-{{ section.id }} .customer-order__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-foreground-muted, #6b7280);
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__back:hover {
+    color: var(--color-primary, #c8102e);
+  }
+
+  #customer-order-{{ section.id }} .customer-order__title {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--color-foreground, #1a1a1a);
+    margin: 0 0 0.5rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__meta {
+    font-size: 0.9375rem;
+    color: var(--color-foreground-muted, #6b7280);
+    margin: 0 0 2rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__status {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.1875rem 0.625rem;
+    border-radius: 999px;
+    text-transform: capitalize;
+    background: var(--color-background-secondary, #faf9f7);
+    color: var(--color-foreground-muted, #6b7280);
+  }
+
+  #customer-order-{{ section.id }} .customer-order__status--paid {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  /* Table */
+  #customer-order-{{ section.id }} .customer-order__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__table th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-foreground-muted, #6b7280);
+    padding: 0 0 1rem;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__table td {
+    padding: 1rem 0.5rem 1rem 0;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    font-size: 0.9375rem;
+    color: var(--color-foreground, #1a1a1a);
+    vertical-align: middle;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__cell--image {
+    width: 60px;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    background: var(--color-background-secondary, #faf9f7);
+  }
+
+  #customer-order-{{ section.id }} .customer-order__item-title {
+    display: block;
+    font-weight: 600;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__item-variant {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-foreground-muted, #6b7280);
+    margin-top: 0.125rem;
+  }
+
+  /* Footer grid */
+  #customer-order-{{ section.id }} .customer-order__footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--color-border, #e5e7eb);
+  }
+
+  @media screen and (max-width: 749px) {
+    #customer-order-{{ section.id }} .customer-order__footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* Addresses */
+  #customer-order-{{ section.id }} .customer-order__addresses {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__address-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-foreground-muted, #6b7280);
+    margin: 0 0 0.5rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__address {
+    font-style: normal;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-foreground, #1a1a1a);
+  }
+
+  /* Totals */
+  #customer-order-{{ section.id }} .customer-order__totals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__totals-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9375rem;
+    color: var(--color-foreground, #1a1a1a);
+  }
+
+  #customer-order-{{ section.id }} .customer-order__totals-row--discount {
+    color: #065f46;
+  }
+
+  #customer-order-{{ section.id }} .customer-order__totals-row--total {
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border, #e5e7eb);
+    margin-top: 0.5rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Customer Order",
+  "tag": "section",
+  "class": "section-customer-order",
+  "limit": 1
+}
+{% endschema %}

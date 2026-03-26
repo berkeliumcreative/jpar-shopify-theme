@@ -1,0 +1,373 @@
+{% comment %}
+  Story Sections — Brand Story
+  Full "Our Story" page with hero gradient header and alternating content blocks.
+  Each block: 2-column grid on desktop, stacks on mobile. Even blocks reverse order.
+  Uses section blocks for CMS-editable story entries.
+{% endcomment %}
+
+{%- liquid
+  assign label = section.settings.label | default: 'About Us'
+  assign title = section.settings.title | default: 'Our Story'
+  assign title_highlight = section.settings.title_highlight | default: 'Story'
+  assign subtitle = section.settings.subtitle | default: "Every great brand begins with a passion. Ours started with a simple belief: that beauty should never come at the cost of your health or our planet."
+-%}
+
+<section
+  id="story-sections-{{ section.id }}"
+  class="story-sections"
+  data-section-id="{{ section.id }}"
+  data-section-type="story-sections"
+>
+  {%- comment -%} Hero header with gradient background {%- endcomment -%}
+  <div class="story-sections__hero">
+    <div class="story-sections__hero-inner container">
+      {%- if label != blank -%}
+        <span class="story-sections__label section-label">
+          {{ label | escape }}
+        </span>
+      {%- endif -%}
+
+      <h1 class="story-sections__title">
+        {%- assign title_words = title | split: ' ' -%}
+        {%- for word in title_words -%}
+          {%- if word == title_highlight -%}
+            <span class="text-gradient-rose">{{ word | escape }}</span>
+          {%- else -%}
+            {{ word | escape }}
+          {%- endif -%}
+          {%- unless forloop.last %} {% endunless -%}
+        {%- endfor -%}
+      </h1>
+
+      {%- if subtitle != blank -%}
+        <p class="story-sections__subtitle section-desc">
+          {{ subtitle | escape }}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Alternating content blocks {%- endcomment -%}
+  <div class="story-sections__content container">
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign block_title = block.settings.title | default: 'Our Story'
+          assign block_content = block.settings.content
+          assign block_image = block.settings.image
+          assign block_icon = block.settings.icon | default: 'heart'
+          assign is_reversed = false
+          assign mod_check = forloop.index0 | modulo: 2
+          if mod_check == 1
+            assign is_reversed = true
+          endif
+        -%}
+
+        <div
+          class="story-sections__block {% if is_reversed %}story-sections__block--reversed{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {%- comment -%} Text column {%- endcomment -%}
+          <div class="story-sections__text">
+            <h2 class="story-sections__block-title">{{ block_title | escape }}</h2>
+            {%- if block_content != blank -%}
+              <div class="story-sections__block-content">
+                {{ block_content }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} Image / placeholder column {%- endcomment -%}
+          <div class="story-sections__media">
+            {%- if block_image != blank -%}
+              <div class="story-sections__image-wrap">
+                <img
+                  src="{{ block_image | image_url: width: 800 }}"
+                  srcset="
+                    {{ block_image | image_url: width: 400 }} 400w,
+                    {{ block_image | image_url: width: 600 }} 600w,
+                    {{ block_image | image_url: width: 800 }} 800w
+                  "
+                  sizes="(max-width: 767px) 100vw, 50vw"
+                  alt="{{ block_image.alt | default: block_title | escape }}"
+                  width="{{ block_image.width }}"
+                  height="{{ block_image.height }}"
+                  loading="lazy"
+                  class="story-sections__image"
+                >
+              </div>
+            {%- else -%}
+              <div class="story-sections__placeholder">
+                <div class="story-sections__placeholder-icon" aria-hidden="true">
+                  {% render 'icon-svg', icon: block_icon %}
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Default blocks when none configured {%- endcomment -%}
+      {%- assign default_blocks = "Our Beginning|Our Philosophy|Our Promise" | split: "|" -%}
+      {%- assign default_icons = "heart|flask|gem" | split: "|" -%}
+      {%- assign default_contents = "Founded in a small kitchen with a dream and a handful of botanical ingredients, JPAR Cosmetics was born from a desire to create beauty products that are as pure as they are effective. Our founder believed that nature holds the key to radiant skin.|We believe in the power of nature, backed by science. Every product in our line is carefully formulated with clean, sustainably sourced ingredients that deliver real results without compromising your health or the environment.|To you, our community: we promise transparency in every ingredient, sustainability in every process, and luxury in every experience. Because you deserve beauty that feels as good as it looks." | split: "|" -%}
+
+      {%- for title_item in default_blocks -%}
+        {%- assign mod_check = forloop.index0 | modulo: 2 -%}
+        <div class="story-sections__block {% if mod_check == 1 %}story-sections__block--reversed{% endif %}">
+          <div class="story-sections__text">
+            <h2 class="story-sections__block-title">{{ title_item }}</h2>
+            <div class="story-sections__block-content">
+              <p>{{ default_contents[forloop.index0] }}</p>
+            </div>
+          </div>
+          <div class="story-sections__media">
+            <div class="story-sections__placeholder">
+              <div class="story-sections__placeholder-icon" aria-hidden="true">
+                {% render 'icon-svg', icon: default_icons[forloop.index0] %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  /* ── Hero header ────────────────────────────────────────── */
+  #story-sections-{{ section.id }} .story-sections__hero {
+    background: linear-gradient(to bottom, var(--color-primary-10, rgba(224, 32, 32, 0.1)), var(--color-bg, #ffffff));
+    padding-top: 8rem;
+    padding-bottom: 4rem;
+    text-align: center;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__hero-inner {
+    max-width: 48rem;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__label {
+    display: inline-block;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  #story-sections-{{ section.id }} .story-sections__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  #story-sections-{{ section.id }} .story-sections__subtitle {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin: 0 auto;
+  }
+
+  /* ── Content area ───────────────────────────────────────── */
+  #story-sections-{{ section.id }} .story-sections__content {
+    padding-top: var(--space-16, 4rem);
+    padding-bottom: var(--space-24, 6rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16, 4rem);
+  }
+
+  /* ── Block: 2-column grid ───────────────────────────────── */
+  #story-sections-{{ section.id }} .story-sections__block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8, 2rem);
+    align-items: center;
+  }
+
+  @media screen and (min-width: 768px) {
+    #story-sections-{{ section.id }} .story-sections__block {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12, 3rem);
+    }
+  }
+
+  /* Reversed block: swap column order on desktop */
+  @media screen and (min-width: 768px) {
+    #story-sections-{{ section.id }} .story-sections__block--reversed .story-sections__text {
+      order: 2;
+    }
+    #story-sections-{{ section.id }} .story-sections__block--reversed .story-sections__media {
+      order: 1;
+    }
+  }
+
+  /* ── Text column ────────────────────────────────────────── */
+  #story-sections-{{ section.id }} .story-sections__block-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  @media screen and (min-width: 768px) {
+    #story-sections-{{ section.id }} .story-sections__block-title {
+      font-size: 1.75rem;
+    }
+  }
+
+  #story-sections-{{ section.id }} .story-sections__block-content {
+    color: var(--color-muted, #6B5E5E);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__block-content p {
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  #story-sections-{{ section.id }} .story-sections__block-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Image column ───────────────────────────────────────── */
+  #story-sections-{{ section.id }} .story-sections__image-wrap {
+    border-radius: var(--radius-lg, 1rem);
+    overflow: hidden;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Placeholder when no image */
+  #story-sections-{{ section.id }} .story-sections__placeholder {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg, 1rem);
+    background: linear-gradient(135deg, var(--color-primary-10, rgba(224, 32, 32, 0.1)), var(--color-secondary-bg, #FAF5F5));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__placeholder-icon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-primary, #E02020);
+    opacity: 0.5;
+  }
+
+  #story-sections-{{ section.id }} .story-sections__placeholder-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Story Sections",
+  "tag": "section",
+  "class": "section-story-sections",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "About Us"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Our Story"
+    },
+    {
+      "type": "text",
+      "id": "title_highlight",
+      "label": "Gradient Word",
+      "info": "Which word in the title should have the gradient effect.",
+      "default": "Story"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Every great brand begins with a passion. Ours started with a simple belief: that beauty should never come at the cost of your health or our planet."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "story_block",
+      "name": "Story Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Block Title",
+          "default": "Our Story"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Share your brand story here. Tell customers about the journey that led to your brand.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "If empty, a gradient placeholder with icon is shown."
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Placeholder Icon",
+          "info": "Shown when no image is uploaded.",
+          "options": [
+            { "value": "heart", "label": "Heart" },
+            { "value": "flask", "label": "Flask" },
+            { "value": "gem", "label": "Gem" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "sparkles", "label": "Sparkles" }
+          ],
+          "default": "heart"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Story Sections",
+      "blocks": [
+        {
+          "type": "story_block",
+          "settings": {
+            "title": "Our Beginning",
+            "content": "<p>Founded in a small kitchen with a dream and a handful of botanical ingredients, JPAR Cosmetics was born from a desire to create beauty products that are as pure as they are effective. Our founder believed that nature holds the key to radiant skin.</p>",
+            "icon": "heart"
+          }
+        },
+        {
+          "type": "story_block",
+          "settings": {
+            "title": "Our Philosophy",
+            "content": "<p>We believe in the power of nature, backed by science. Every product in our line is carefully formulated with clean, sustainably sourced ingredients that deliver real results without compromising your health or the environment.</p>",
+            "icon": "flask"
+          }
+        },
+        {
+          "type": "story_block",
+          "settings": {
+            "title": "Our Promise",
+            "content": "<p>To you, our community: we promise transparency in every ingredient, sustainability in every process, and luxury in every experience. Because you deserve beauty that feels as good as it looks.</p>",
+            "icon": "gem"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

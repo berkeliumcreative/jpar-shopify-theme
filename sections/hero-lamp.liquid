@@ -1,0 +1,286 @@
+{% comment %}
+  Hero Lamp Section
+  Full-viewport hero with background image, animated logo, typewriter text, and magnetic CTA button.
+  Requires: hero-gradient-bg.jpg in assets, jpar-logo.png in assets
+  JS hooks: .hero-typewriter[data-typewriter], .typewriter-cursor, .magnetic-wrap
+{% endcomment %}
+
+{{ 'section-hero-lamp.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign heading_image = section.settings.heading_image
+  assign typewriter_raw = section.settings.typewriter_words | default: "Clean Beauty\nRadiant Skin\nLuxury Skincare\nNatural Glow"
+  assign typewriter_lines = typewriter_raw | split: "\n"
+  assign button_text = section.settings.button_text | default: 'Shop Now'
+  assign button_link = section.settings.button_link | default: '/collections/all'
+-%}
+
+{%- capture typewriter_json -%}
+  [
+    {%- for line in typewriter_lines -%}
+      "{{ line | strip | escape }}"{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+{%- endcapture -%}
+
+<section
+  id="hero-{{ section.id }}"
+  class="hero-lamp"
+  style="background-image: url('{{ 'hero-gradient-bg.jpg' | asset_url }}');"
+  data-section-id="{{ section.id }}"
+  data-section-type="hero-lamp"
+>
+  <div class="hero-lamp__overlay"></div>
+
+  <div class="hero-lamp__content">
+    {%- if heading_image != blank -%}
+      <div class="hero-lamp__logo">
+        {%- assign logo_alt = heading_image.alt | default: shop.name -%}
+        <img
+          src="{{ heading_image | image_url: width: 400 }}"
+          srcset="
+            {{ heading_image | image_url: width: 200 }} 200w,
+            {{ heading_image | image_url: width: 400 }} 400w,
+            {{ heading_image | image_url: width: 600 }} 600w
+          "
+          sizes="(max-width: 767px) 96px, 176px"
+          alt="{{ logo_alt | escape }}"
+          width="{{ heading_image.width }}"
+          height="{{ heading_image.height }}"
+          loading="eager"
+          fetchpriority="high"
+          class="hero-lamp__logo-img"
+        >
+      </div>
+    {%- else -%}
+      <div class="hero-lamp__logo">
+        <img
+          src="{{ 'jpar-logo.png' | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          loading="eager"
+          fetchpriority="high"
+          class="hero-lamp__logo-img"
+        >
+      </div>
+    {%- endif -%}
+
+    <div
+      class="hero-typewriter"
+      data-typewriter='{{ typewriter_json | strip }}'
+      data-typing-speed="80"
+      data-deleting-speed="40"
+      data-pause="2500"
+    >
+      <span class="hero-typewriter__text" aria-live="polite" aria-atomic="true"></span>
+      <span class="typewriter-cursor" aria-hidden="true">|</span>
+    </div>
+
+    <div class="hero-lamp__cta">
+      <div class="magnetic-wrap" data-magnetic>
+        <a
+          href="{{ button_link }}"
+          class="hero-lamp__button button button--primary"
+        >
+          {{ button_text | escape }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #hero-{{ section.id }} {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 85vh;
+    width: 100%;
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} {
+      min-height: 100vh;
+    }
+  }
+
+  #hero-{{ section.id }} .hero-lamp__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.35) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  #hero-{{ section.id }} .hero-lamp__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 25vh;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    width: 100%;
+    max-width: 48rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} .hero-lamp__content {
+      padding-top: 28vh;
+    }
+  }
+
+  /* Logo */
+  #hero-{{ section.id }} .hero-lamp__logo {
+    margin-bottom: 1.5rem;
+  }
+
+  #hero-{{ section.id }} .hero-lamp__logo-img {
+    height: 6rem;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} .hero-lamp__logo-img {
+      height: 11rem;
+    }
+  }
+
+  /* Typewriter */
+  #hero-{{ section.id }} .hero-typewriter {
+    min-height: 3rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #hero-{{ section.id }} .hero-typewriter__text {
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} .hero-typewriter__text {
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+    }
+  }
+
+  #hero-{{ section.id }} .typewriter-cursor {
+    display: inline-block;
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 2px;
+    animation: hero-cursor-blink 0.8s step-end infinite;
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} .typewriter-cursor {
+      font-size: 1.5rem;
+    }
+  }
+
+  @keyframes hero-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* CTA Button */
+  #hero-{{ section.id }} .hero-lamp__cta {
+    display: flex;
+    justify-content: center;
+  }
+
+  #hero-{{ section.id }} .magnetic-wrap {
+    display: inline-block;
+    position: relative;
+  }
+
+  #hero-{{ section.id }} .hero-lamp__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary, #c8102e);
+    color: #ffffff;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 1.5rem 2.5rem;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+
+  #hero-{{ section.id }} .hero-lamp__button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(200, 16, 46, 0.4);
+    background-color: var(--color-primary-hover, #a50d26);
+  }
+
+  @media screen and (min-width: 750px) {
+    #hero-{{ section.id }} .hero-lamp__button {
+      font-size: 1.25rem;
+      padding: 1.75rem 3.5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero Lamp",
+  "tag": "section",
+  "class": "section-hero-lamp",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "heading_image",
+      "label": "Logo Image",
+      "info": "White version of the brand logo. Falls back to jpar-logo.png in assets."
+    },
+    {
+      "type": "textarea",
+      "id": "typewriter_words",
+      "label": "Typewriter Words",
+      "default": "Clean Beauty\nRadiant Skin\nLuxury Skincare\nNatural Glow",
+      "info": "One phrase per line. These rotate in the typewriter animation."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Lamp"
+    }
+  ]
+}
+{% endschema %}

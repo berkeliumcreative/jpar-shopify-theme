@@ -1,0 +1,294 @@
+{% comment %}
+  Brand Promise Section
+  Fast-scrolling marquee showcasing brand values with icons.
+  Pure CSS animation — no JavaScript required.
+{% endcomment %}
+
+{%- liquid
+  assign has_blocks = false
+  if section.blocks.size > 0
+    assign has_blocks = true
+  endif
+-%}
+
+<section
+  id="brand-promise-{{ section.id }}"
+  class="brand-promise"
+  data-section-id="{{ section.id }}"
+  data-section-type="brand-promise"
+  aria-label="Brand values"
+>
+  <div class="brand-promise__inner">
+    <div class="brand-promise__track" aria-hidden="false">
+      {%- comment -%} Render 2x for seamless loop {%- endcomment -%}
+      {%- for i in (1..2) -%}
+        {%- if has_blocks -%}
+          {%- for block in section.blocks -%}
+            <div class="brand-promise__item" {{ block.shopify_attributes }}>
+              <span class="brand-promise__icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'leaf' -%}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z" />
+                      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                  {%- when 'rabbit' -%}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M13 16a3 3 0 0 1 2.24 1" />
+                      <path d="M18 12h.01" />
+                      <path d="M18 21h-8a4 4 0 0 1-4-4 7 7 0 0 1 7-7h.2L9.6 6.4a1.93 1.93 0 1 1 2.8-2.8L15.8 7h.2c3.3 0 6 2.7 6 6v1a2 2 0 0 1-2 2h-1a3 3 0 0 0-3 3" />
+                      <path d="M20 8.54V4a2 2 0 1 0-4 0v3" />
+                      <path d="M7.612 12.524a3 3 0 1 0-1.6 4.3" />
+                    </svg>
+                  {%- when 'recycle' -%}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+                      <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
+                      <path d="m14 16-3 3 3 3" />
+                      <path d="M8.293 13.596 4.875 8.091a1.784 1.784 0 0 1 .004-1.785A1.83 1.83 0 0 1 6.45 5.4h4.2" />
+                      <path d="M14.707 13.596 19.125 8.091a1.784 1.784 0 0 0 0-1.776A1.83 1.83 0 0 0 17.556 5.4h-.812" />
+                      <path d="m7 9 3-3-3-3" />
+                      <path d="M12 22v-6" />
+                      <path d="m17 2-3 3 3 3" />
+                    </svg>
+                  {%- when 'sparkles' -%}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+                      <path d="M20 3v4" />
+                      <path d="M22 5h-4" />
+                      <path d="M4 17v2" />
+                      <path d="M5 18H3" />
+                    </svg>
+                  {%- else -%}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m9 12 2 2 4-4" />
+                    </svg>
+                {%- endcase -%}
+              </span>
+              <span class="brand-promise__text">
+                {{ block.settings.text | escape }}
+              </span>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Default items when no blocks configured {%- endcomment -%}
+          <div class="brand-promise__item">
+            <span class="brand-promise__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.5 10-10 10Z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </svg>
+            </span>
+            <span class="brand-promise__text">Clean Ingredients</span>
+          </div>
+          <div class="brand-promise__item">
+            <span class="brand-promise__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 16a3 3 0 0 1 2.24 1" />
+                <path d="M18 12h.01" />
+                <path d="M18 21h-8a4 4 0 0 1-4-4 7 7 0 0 1 7-7h.2L9.6 6.4a1.93 1.93 0 1 1 2.8-2.8L15.8 7h.2c3.3 0 6 2.7 6 6v1a2 2 0 0 1-2 2h-1a3 3 0 0 0-3 3" />
+                <path d="M20 8.54V4a2 2 0 1 0-4 0v3" />
+                <path d="M7.612 12.524a3 3 0 1 0-1.6 4.3" />
+              </svg>
+            </span>
+            <span class="brand-promise__text">Cruelty Free</span>
+          </div>
+          <div class="brand-promise__item">
+            <span class="brand-promise__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
+                <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
+                <path d="m14 16-3 3 3 3" />
+                <path d="M8.293 13.596 4.875 8.091a1.784 1.784 0 0 1 .004-1.785A1.83 1.83 0 0 1 6.45 5.4h4.2" />
+                <path d="M14.707 13.596 19.125 8.091a1.784 1.784 0 0 0 0-1.776A1.83 1.83 0 0 0 17.556 5.4h-.812" />
+                <path d="m7 9 3-3-3-3" />
+                <path d="M12 22v-6" />
+                <path d="m17 2-3 3 3 3" />
+              </svg>
+            </span>
+            <span class="brand-promise__text">Sustainable</span>
+          </div>
+          <div class="brand-promise__item">
+            <span class="brand-promise__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+                <path d="M20 3v4" />
+                <path d="M22 5h-4" />
+                <path d="M4 17v2" />
+                <path d="M5 18H3" />
+              </svg>
+            </span>
+            <span class="brand-promise__text">Luxury Quality</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #brand-promise-{{ section.id }} {
+    background-color: var(--color-background-secondary, #faf9f7);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__inner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__track {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: brand-promise-scroll-{{ section.id }} 8s linear infinite;
+    will-change: transform;
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    flex-shrink: 0;
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary, #c8102e);
+    flex-shrink: 0;
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  #brand-promise-{{ section.id }} .brand-promise__text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-foreground-muted, #6b7280);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  @keyframes brand-promise-scroll-{{ section.id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Pause on hover for accessibility */
+  @media (hover: hover) {
+    #brand-promise-{{ section.id }}:hover .brand-promise__track {
+      animation-play-state: paused;
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    #brand-promise-{{ section.id }} .brand-promise__track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Brand Promise",
+  "tag": "section",
+  "class": "section-brand-promise",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Value Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "rabbit", "label": "Rabbit" },
+            { "value": "recycle", "label": "Recycle" },
+            { "value": "sparkles", "label": "Sparkles" },
+            { "value": "check", "label": "Check Circle" }
+          ],
+          "default": "leaf"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Clean Ingredients"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Promise",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "icon": "leaf",
+            "text": "Clean Ingredients"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "rabbit",
+            "text": "Cruelty Free"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "recycle",
+            "text": "Sustainable"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "sparkles",
+            "text": "Luxury Quality"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,132 @@
+{% comment %}
+  Page Header Section — Reusable
+  Centered page header with optional label, title (with gradient word), and description.
+  Includes padding-top offset for fixed header.
+  Use on any content page that needs a consistent header pattern.
+{% endcomment %}
+
+{%- liquid
+  assign label = section.settings.label
+  assign title = section.settings.title | default: page.title | default: 'Page Title'
+  assign title_highlight = section.settings.title_highlight
+  assign description = section.settings.description
+-%}
+
+<section
+  id="page-header-{{ section.id }}"
+  class="page-header-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="page-header"
+>
+  <div class="page-header__inner container">
+    {%- if label != blank -%}
+      <span class="page-header__label section-label">
+        {{ label | escape }}
+      </span>
+    {%- endif -%}
+
+    <h1 class="page-header__title">
+      {%- if title_highlight != blank -%}
+        {%- assign title_words = title | split: ' ' -%}
+        {%- for word in title_words -%}
+          {%- if word == title_highlight -%}
+            <span class="text-gradient-rose">{{ word | escape }}</span>
+          {%- else -%}
+            {{ word | escape }}
+          {%- endif -%}
+          {%- unless forloop.last %} {% endunless -%}
+        {%- endfor -%}
+      {%- else -%}
+        {{ title | escape }}
+      {%- endif -%}
+    </h1>
+
+    {%- if description != blank -%}
+      <p class="page-header__description section-desc">
+        {{ description | escape }}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  /* ── Section wrapper ────────────────────────────────────── */
+  #page-header-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: 0;
+    margin-bottom: var(--space-16, 4rem);
+  }
+
+  /* ── Inner container ────────────────────────────────────── */
+  #page-header-{{ section.id }} .page-header__inner {
+    text-align: center;
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Label ──────────────────────────────────────────────── */
+  #page-header-{{ section.id }} .page-header__label {
+    display: inline-block;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  /* ── Title ──────────────────────────────────────────────── */
+  #page-header-{{ section.id }} .page-header__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  /* ── Description ────────────────────────────────────────── */
+  #page-header-{{ section.id }} .page-header__description {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin: 0 auto;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Page Header",
+  "tag": "section",
+  "class": "section-page-header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "info": "Small uppercase text above the title. Leave blank to hide.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "info": "Falls back to the page title if empty.",
+      "default": "Page Title"
+    },
+    {
+      "type": "text",
+      "id": "title_highlight",
+      "label": "Gradient Word",
+      "info": "Which word in the title should have the gradient effect. Leave blank for no gradient."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "info": "Muted text below the title. Leave blank to hide."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page Header"
+    }
+  ]
+}
+{% endschema %}

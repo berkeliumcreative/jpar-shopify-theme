@@ -1,0 +1,315 @@
+{% comment %}
+  Article Content Section — JPAR Cosmetics
+  Full blog post / article page layout.
+  Back button, category tag, title, author + date meta, featured image,
+  and article content rendered in a prose-styled container.
+{% endcomment %}
+
+<section
+  id="article-content-{{ section.id }}"
+  class="article-content-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="article-content"
+>
+  <div class="article-content__container container">
+    {%- comment -%} Back to Blog link {%- endcomment -%}
+    <a href="{{ blog.url | default: '/blogs/journal' }}" class="article-content__back">
+      <span class="article-content__back-icon" aria-hidden="true">
+        {% render 'icon-svg', icon: 'arrow-left' %}
+      </span>
+      <span>Back to Blog</span>
+    </a>
+
+    {%- comment -%} Article header {%- endcomment -%}
+    <header class="article-content__header">
+      {%- comment -%} Category tag {%- endcomment -%}
+      {%- if article.tags.size > 0 -%}
+        <span class="article-content__category">
+          {{ article.tags.first | escape }}
+        </span>
+      {%- endif -%}
+
+      {%- comment -%} Title {%- endcomment -%}
+      <h1 class="article-content__title">
+        {{ article.title | escape }}
+      </h1>
+
+      {%- comment -%} Meta: author + date {%- endcomment -%}
+      <div class="article-content__meta">
+        {%- if article.author -%}
+          <span class="article-content__author">{{ article.author | escape }}</span>
+          <span class="article-content__meta-dot" aria-hidden="true">&middot;</span>
+        {%- endif -%}
+        <time class="article-content__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: '%B %d, %Y' }}
+        </time>
+      </div>
+    </header>
+
+    {%- comment -%} Featured image {%- endcomment -%}
+    {%- if article.image -%}
+      <div class="article-content__featured-image">
+        <img
+          src="{{ article.image | image_url: width: 1200 }}"
+          srcset="
+            {{ article.image | image_url: width: 600 }} 600w,
+            {{ article.image | image_url: width: 900 }} 900w,
+            {{ article.image | image_url: width: 1200 }} 1200w
+          "
+          sizes="(max-width: 767px) 100vw, 800px"
+          alt="{{ article.image.alt | default: article.title | escape }}"
+          width="{{ article.image.width }}"
+          height="{{ article.image.height }}"
+          loading="eager"
+          fetchpriority="high"
+          class="article-content__image"
+        >
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Article body {%- endcomment -%}
+    <div class="article-content__body prose">
+      {{ article.content }}
+    </div>
+
+    {%- comment -%} Tags {%- endcomment -%}
+    {%- if article.tags.size > 0 -%}
+      <div class="article-content__tags">
+        {%- for tag in article.tags -%}
+          <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-content__tag">
+            {{ tag | escape }}
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  /* ── Section ────────────────────────────────────────────── */
+  #article-content-{{ section.id }} {
+    padding-top: 7rem;
+    padding-bottom: var(--space-24, 6rem);
+  }
+
+  #article-content-{{ section.id }} .article-content__container {
+    max-width: 52rem;
+  }
+
+  /* ── Back link ──────────────────────────────────────────── */
+  #article-content-{{ section.id }} .article-content__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-muted, #6B5E5E);
+    text-decoration: none;
+    margin-bottom: var(--space-8, 2rem);
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  #article-content-{{ section.id }} .article-content__back:hover {
+    color: var(--color-primary, #E02020);
+  }
+
+  #article-content-{{ section.id }} .article-content__back-icon {
+    display: inline-flex;
+  }
+
+  #article-content-{{ section.id }} .article-content__back-icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  #article-content-{{ section.id }} .article-content__header {
+    margin-bottom: var(--space-8, 2rem);
+  }
+
+  /* Category */
+  #article-content-{{ section.id }} .article-content__category {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E02020);
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  /* Title */
+  #article-content-{{ section.id }} .article-content__title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  @media screen and (min-width: 768px) {
+    #article-content-{{ section.id }} .article-content__title {
+      font-size: 3rem;
+    }
+  }
+
+  /* Meta */
+  #article-content-{{ section.id }} .article-content__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    font-size: 0.875rem;
+    color: var(--color-muted, #6B5E5E);
+  }
+
+  #article-content-{{ section.id }} .article-content__author {
+    font-weight: 500;
+  }
+
+  #article-content-{{ section.id }} .article-content__meta-dot {
+    opacity: 0.5;
+  }
+
+  /* ── Featured image ─────────────────────────────────────── */
+  #article-content-{{ section.id }} .article-content__featured-image {
+    margin-bottom: var(--space-10, 2.5rem);
+    border-radius: var(--radius-lg, 1rem);
+    overflow: hidden;
+  }
+
+  #article-content-{{ section.id }} .article-content__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── Prose: article body styling ────────────────────────── */
+  #article-content-{{ section.id }} .prose {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  #article-content-{{ section.id }} .prose h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: var(--space-10, 2.5rem);
+    margin-bottom: var(--space-4, 1rem);
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  #article-content-{{ section.id }} .prose h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: var(--space-8, 2rem);
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  #article-content-{{ section.id }} .prose p {
+    margin: 0 0 var(--space-6, 1.5rem);
+  }
+
+  #article-content-{{ section.id }} .prose a {
+    color: var(--color-primary, #E02020);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  #article-content-{{ section.id }} .prose a:hover {
+    color: var(--color-primary-dark, #B31A1A);
+  }
+
+  #article-content-{{ section.id }} .prose ul,
+  #article-content-{{ section.id }} .prose ol {
+    margin: 0 0 var(--space-6, 1.5rem);
+    padding-left: var(--space-6, 1.5rem);
+  }
+
+  #article-content-{{ section.id }} .prose li {
+    margin-bottom: var(--space-2, 0.5rem);
+  }
+
+  #article-content-{{ section.id }} .prose li::marker {
+    color: var(--color-primary, #E02020);
+  }
+
+  #article-content-{{ section.id }} .prose blockquote {
+    margin: var(--space-8, 2rem) 0;
+    padding: var(--space-4, 1rem) var(--space-6, 1.5rem);
+    border-left: 3px solid var(--color-primary, #E02020);
+    background-color: var(--color-secondary-bg, #FAF5F5);
+    border-radius: 0 var(--radius, 0.75rem) var(--radius, 0.75rem) 0;
+    font-style: italic;
+    color: var(--color-muted, #6B5E5E);
+  }
+
+  #article-content-{{ section.id }} .prose blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  #article-content-{{ section.id }} .prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg, 1rem);
+    margin: var(--space-8, 2rem) 0;
+  }
+
+  #article-content-{{ section.id }} .prose strong {
+    font-weight: 600;
+    color: var(--color-fg, #2E1F1F);
+  }
+
+  #article-content-{{ section.id }} .prose hr {
+    border: none;
+    border-top: 1px solid var(--color-border, #E8DEDE);
+    margin: var(--space-10, 2.5rem) 0;
+  }
+
+  /* ── Tags ───────────────────────────────────────────────── */
+  #article-content-{{ section.id }} .article-content__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem);
+    margin-top: var(--space-10, 2.5rem);
+    padding-top: var(--space-6, 1.5rem);
+    border-top: 1px solid var(--color-border, #E8DEDE);
+  }
+
+  #article-content-{{ section.id }} .article-content__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-muted, #6B5E5E);
+    background: var(--color-secondary-bg, #FAF5F5);
+    border-radius: var(--radius-full, 9999px);
+    text-decoration: none;
+    transition: all var(--transition-fast, 150ms ease);
+  }
+
+  #article-content-{{ section.id }} .article-content__tag:hover {
+    color: var(--color-primary, #E02020);
+    background: var(--color-primary-10, rgba(224, 32, 32, 0.1));
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Article Content",
+  "tag": "section",
+  "class": "section-article-content",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Article Content"
+    }
+  ]
+}
+{% endschema %}

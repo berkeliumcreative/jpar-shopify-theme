@@ -1,0 +1,186 @@
+{% comment %}
+  Customer Activate Account Section
+  Password + confirm password form for account activation flow.
+  Uses Shopify's native {% form 'activate_customer_password' %}.
+{% endcomment %}
+
+<section
+  id="customer-activate-{{ section.id }}"
+  class="customer-page"
+  data-section-id="{{ section.id }}"
+  data-section-type="customer-activate-account"
+>
+  <div class="customer-activate__container page-width">
+    <div class="customer-activate__card">
+      <h1 class="customer-activate__title">Activate Account</h1>
+      <p class="customer-activate__description">Create a password to activate your account.</p>
+
+      {% form 'activate_customer_password' %}
+        {%- if form.errors -%}
+          <div class="customer-activate__errors form-errors" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="form-group">
+          <label for="activate-password" class="form-label">{{ 'customer.password' | t }}</label>
+          <input
+            type="password"
+            id="activate-password"
+            name="customer[password]"
+            class="form-input"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="activate-password-confirm" class="form-label">Confirm Password</label>
+          <input
+            type="password"
+            id="activate-password-confirm"
+            name="customer[password_confirmation]"
+            class="form-input"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn-primary customer-activate__submit">
+          Activate Account
+        </button>
+
+        <p class="customer-activate__decline">
+          <a href="{{ routes.account_login_url }}" class="customer-activate__decline-link">
+            Decline invitation
+          </a>
+        </p>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #customer-activate-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: 6rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__container {
+    width: 100%;
+    max-width: 28rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__card {
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 1rem;
+    padding: 2.5rem;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-foreground, #1a1a1a);
+    margin: 0 0 0.5rem;
+    text-align: center;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__description {
+    font-size: 0.9375rem;
+    color: var(--color-foreground-muted, #6b7280);
+    text-align: center;
+    margin: 0 0 1.5rem;
+  }
+
+  #customer-activate-{{ section.id }} .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  #customer-activate-{{ section.id }} .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-foreground, #1a1a1a);
+    margin-bottom: 0.375rem;
+  }
+
+  #customer-activate-{{ section.id }} .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--color-foreground, #1a1a1a);
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 0.5rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  #customer-activate-{{ section.id }} .form-input:focus {
+    border-color: var(--color-primary, #c8102e);
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+  }
+
+  #customer-activate-{{ section.id }} .btn-primary {
+    display: block;
+    width: 100%;
+    background-color: var(--color-primary, #c8102e);
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 0.625rem;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    margin-top: 1.5rem;
+  }
+
+  #customer-activate-{{ section.id }} .btn-primary:hover {
+    background-color: var(--color-primary-hover, #a50d26);
+    transform: translateY(-1px);
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__decline {
+    text-align: center;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__decline-link {
+    font-size: 0.8125rem;
+    color: var(--color-foreground-muted, #6b7280);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  #customer-activate-{{ section.id }} .customer-activate__decline-link:hover {
+    color: var(--color-primary, #c8102e);
+  }
+
+  #customer-activate-{{ section.id }} .form-errors {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Activate Account",
+  "tag": "section",
+  "class": "section-customer-activate-account",
+  "limit": 1
+}
+{% endschema %}

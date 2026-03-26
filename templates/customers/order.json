@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "customer_order": {
+      "type": "customer-order",
+      "settings": {}
+    }
+  },
+  "order": ["customer_order"]
+}

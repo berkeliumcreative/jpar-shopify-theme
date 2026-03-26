@@ -1,0 +1,512 @@
+{% comment %}
+  Blog Grid Section — JPAR Cosmetics
+  Blog listing page with responsive 3-column article card grid.
+  Loops through Shopify's blog.articles object.
+  Each card: featured image, category tag, title, excerpt, meta row.
+  Matches React Blog page layout.
+{% endcomment %}
+
+{%- liquid
+  assign label = section.settings.label | default: 'Journal'
+  assign heading = section.settings.heading | default: 'Beauty Blog'
+  assign heading_highlight = section.settings.heading_highlight | default: 'Blog'
+  assign subtitle = section.settings.subtitle | default: 'Expert tips, ingredient deep-dives, and beauty inspiration to help you glow from within.'
+  assign selected_blog = section.settings.blog
+  assign articles_per_page = section.settings.articles_per_page | default: 9
+-%}
+
+<section
+  id="blog-grid-{{ section.id }}"
+  class="blog-grid-section"
+  data-section-id="{{ section.id }}"
+  data-section-type="blog-grid"
+>
+  <div class="blog-grid__container container">
+    {%- comment -%} Page header {%- endcomment -%}
+    <div class="blog-grid__header">
+      {%- if label != blank -%}
+        <span class="blog-grid__label section-label">
+          {{ label | escape }}
+        </span>
+      {%- endif -%}
+
+      <h1 class="blog-grid__title">
+        {%- assign title_words = heading | split: ' ' -%}
+        {%- for word in title_words -%}
+          {%- if word == heading_highlight -%}
+            <span class="text-gradient-rose">{{ word | escape }}</span>
+          {%- else -%}
+            {{ word | escape }}
+          {%- endif -%}
+          {%- unless forloop.last %} {% endunless -%}
+        {%- endfor -%}
+      </h1>
+
+      {%- if subtitle != blank -%}
+        <p class="blog-grid__subtitle section-desc">
+          {{ subtitle | escape }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Article grid {%- endcomment -%}
+    {%- if selected_blog != blank and selected_blog.articles_count > 0 -%}
+      {%- paginate selected_blog.articles by articles_per_page -%}
+        <div class="blog-grid__grid">
+          {%- for article in selected_blog.articles -%}
+            <article class="blog-grid__card">
+              {%- comment -%} Image {%- endcomment -%}
+              <a href="{{ article.url }}" class="blog-grid__image-link" aria-label="{{ article.title | escape }}">
+                {%- if article.image -%}
+                  <div class="blog-grid__image-wrap">
+                    <img
+                      src="{{ article.image | image_url: width: 800 }}"
+                      srcset="
+                        {{ article.image | image_url: width: 400 }} 400w,
+                        {{ article.image | image_url: width: 600 }} 600w,
+                        {{ article.image | image_url: width: 800 }} 800w
+                      "
+                      sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                      alt="{{ article.image.alt | default: article.title | escape }}"
+                      width="{{ article.image.width }}"
+                      height="{{ article.image.height }}"
+                      loading="lazy"
+                      class="blog-grid__image"
+                    >
+                  </div>
+                {%- else -%}
+                  <div class="blog-grid__image-placeholder">
+                    <div class="blog-grid__placeholder-icon" aria-hidden="true">
+                      {% render 'icon-svg', icon: 'file-text' %}
+                    </div>
+                  </div>
+                {%- endif -%}
+              </a>
+
+              {%- comment -%} Card body {%- endcomment -%}
+              <div class="blog-grid__card-body">
+                {%- comment -%} Category tag {%- endcomment -%}
+                {%- if article.tags.size > 0 -%}
+                  <span class="blog-grid__category">
+                    {{ article.tags.first | escape }}
+                  </span>
+                {%- endif -%}
+
+                {%- comment -%} Title {%- endcomment -%}
+                <h2 class="blog-grid__card-title">
+                  <a href="{{ article.url }}">
+                    {{ article.title | escape }}
+                  </a>
+                </h2>
+
+                {%- comment -%} Excerpt {%- endcomment -%}
+                {%- assign excerpt_text = article.excerpt_or_content | strip_html | truncate: 150 -%}
+                {%- if excerpt_text != blank -%}
+                  <p class="blog-grid__excerpt">{{ excerpt_text }}</p>
+                {%- endif -%}
+
+                {%- comment -%} Meta row: date + read more {%- endcomment -%}
+                <div class="blog-grid__meta">
+                  <time class="blog-grid__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                    {% render 'icon-svg', icon: 'calendar' %}
+                    {{ article.published_at | date: '%B %d, %Y' }}
+                  </time>
+                  <a href="{{ article.url }}" class="blog-grid__read-more">
+                    Read More
+                    {% render 'icon-svg', icon: 'arrow-right' %}
+                  </a>
+                </div>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Pagination {%- endcomment -%}
+        {%- if paginate.pages > 1 -%}
+          <nav class="blog-grid__pagination" role="navigation" aria-label="Blog pagination">
+            <ul class="blog-grid__pagination-list">
+              {%- if paginate.previous -%}
+                <li>
+                  <a href="{{ paginate.previous.url }}" class="blog-grid__pagination-link" aria-label="Previous page">
+                    {% render 'icon-svg', icon: 'arrow-left' %}
+                  </a>
+                </li>
+              {%- endif -%}
+
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <li>
+                    <a href="{{ part.url }}" class="blog-grid__pagination-link">{{ part.title }}</a>
+                  </li>
+                {%- else -%}
+                  {%- if part.title == paginate.current_page -%}
+                    <li>
+                      <span class="blog-grid__pagination-current" aria-current="page">{{ part.title }}</span>
+                    </li>
+                  {%- else -%}
+                    <li>
+                      <span class="blog-grid__pagination-ellipsis">{{ part.title }}</span>
+                    </li>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if paginate.next -%}
+                <li>
+                  <a href="{{ paginate.next.url }}" class="blog-grid__pagination-link" aria-label="Next page">
+                    {% render 'icon-svg', icon: 'arrow-right' %}
+                  </a>
+                </li>
+              {%- endif -%}
+            </ul>
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="blog-grid__empty">
+        <p>Select a blog in the theme editor to display articles, or create blog posts in Shopify Admin.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  /* ── Section ────────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} {
+    padding-top: 8rem;
+    padding-bottom: var(--space-24, 6rem);
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__header {
+    text-align: center;
+    margin-bottom: var(--space-12, 3rem);
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__label {
+    display: inline-block;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0 0 var(--space-4, 1rem);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__subtitle {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin: 0 auto;
+  }
+
+  /* ── Grid ───────────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8, 2rem);
+  }
+
+  @media screen and (min-width: 640px) {
+    #blog-grid-{{ section.id }} .blog-grid__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    #blog-grid-{{ section.id }} .blog-grid__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ── Card ───────────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-lg, 1rem);
+    overflow: hidden;
+    background: var(--color-card, #ffffff);
+    border: 1px solid var(--color-border, #E8DEDE);
+    transition: box-shadow var(--transition, 300ms ease), transform var(--transition, 300ms ease);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__card:hover {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.1));
+    transform: translateY(-2px);
+  }
+
+  /* ── Image area ─────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__image-link {
+    display: block;
+    text-decoration: none;
+    overflow: hidden;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__image-wrap {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--transition-slow, 500ms ease);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__card:hover .blog-grid__image {
+    transform: scale(1.05);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__image-placeholder {
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, var(--color-primary-10, rgba(224, 32, 32, 0.1)), var(--color-secondary-bg, #FAF5F5));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__placeholder-icon {
+    color: var(--color-primary, #E02020);
+    opacity: 0.3;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__placeholder-icon svg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  /* ── Card body ──────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__card-body {
+    padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) var(--space-6, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  /* Category badge */
+  #blog-grid-{{ section.id }} .blog-grid__category {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E02020);
+    margin-bottom: var(--space-2, 0.5rem);
+    align-self: flex-start;
+  }
+
+  /* Title */
+  #blog-grid-{{ section.id }} .blog-grid__card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 var(--space-2, 0.5rem);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__card-title a {
+    color: var(--color-fg, #2E1F1F);
+    text-decoration: none;
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__card-title a:hover {
+    color: var(--color-primary, #E02020);
+  }
+
+  /* Excerpt */
+  #blog-grid-{{ section.id }} .blog-grid__excerpt {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0 0 var(--space-4, 1rem);
+    flex-grow: 1;
+  }
+
+  /* Meta row */
+  #blog-grid-{{ section.id }} .blog-grid__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4, 1rem);
+    padding-top: var(--space-3, 0.75rem);
+    border-top: 1px solid var(--color-border, #E8DEDE);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__date {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+    font-size: 0.8125rem;
+    color: var(--color-muted, #6B5E5E);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__date svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    opacity: 0.6;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1, 0.25rem);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-primary, #E02020);
+    text-decoration: none;
+    transition: gap var(--transition-fast, 150ms ease);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__read-more:hover {
+    gap: var(--space-2, 0.5rem);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__read-more svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* ── Pagination ─────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-12, 3rem);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 var(--space-2, 0.5rem);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-fg, #2E1F1F);
+    background: var(--color-card, #ffffff);
+    border: 1px solid var(--color-border, #E8DEDE);
+    border-radius: var(--radius, 0.75rem);
+    text-decoration: none;
+    transition: all var(--transition-fast, 150ms ease);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-link:hover {
+    border-color: var(--color-primary, #E02020);
+    color: var(--color-primary, #E02020);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-link svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-current {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 var(--space-2, 0.5rem);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-primary, #E02020);
+    border: 1px solid var(--color-primary, #E02020);
+    border-radius: var(--radius, 0.75rem);
+  }
+
+  #blog-grid-{{ section.id }} .blog-grid__pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    color: var(--color-muted, #6B5E5E);
+  }
+
+  /* ── Empty state ────────────────────────────────────────── */
+  #blog-grid-{{ section.id }} .blog-grid__empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--color-muted, #6B5E5E);
+    font-size: 0.9375rem;
+    border: 2px dashed var(--color-border, #E8DEDE);
+    border-radius: var(--radius-lg, 1rem);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Blog Grid",
+  "tag": "section",
+  "class": "section-blog-grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "Journal"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Beauty Blog"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Gradient Word",
+      "info": "Which word in the heading should have the gradient effect.",
+      "default": "Blog"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Expert tips, ingredient deep-dives, and beauty inspiration to help you glow from within."
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles Per Page",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 9
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Grid"
+    }
+  ]
+}
+{% endschema %}

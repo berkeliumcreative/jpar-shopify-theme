@@ -1,0 +1,161 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "JPAR Cosmetics",
+    "theme_version": "1.0.0",
+    "theme_author": "Berkelium Creative",
+    "theme_documentation_url": "https://github.com/berkeliumcreative/jpar-shopify-theme",
+    "theme_support_url": "https://github.com/berkeliumcreative/jpar-shopify-theme/issues"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary (Brand Red)",
+        "default": "#E02020"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_dark",
+        "label": "Primary Dark (Accent Red)",
+        "default": "#B31A1A"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_foreground",
+        "label": "Text Color",
+        "default": "#2E1F1F"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted Text",
+        "default": "#6B5E5E"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border Color",
+        "default": "#E8DEDE"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary_bg",
+        "label": "Secondary Background",
+        "default": "#FAF5F5"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading Font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body Font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "range",
+        "id": "font_body_size",
+        "label": "Base Font Size (px)",
+        "min": 14,
+        "max": 22,
+        "step": 1,
+        "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter",
+        "label": "Twitter / X URL"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok URL"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Type",
+        "options": [
+          { "value": "drawer", "label": "Drawer (slide-out)" },
+          { "value": "page", "label": "Cart Page" }
+        ],
+        "default": "drawer"
+      }
+    ]
+  },
+  {
+    "name": "Newsletter Popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "popup_enabled",
+        "label": "Enable newsletter popup",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "popup_delay",
+        "label": "Popup Delay (seconds)",
+        "min": 3,
+        "max": 60,
+        "step": 1,
+        "default": 10
+      },
+      {
+        "type": "text",
+        "id": "popup_heading",
+        "label": "Popup Heading",
+        "default": "Get 10% Off"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_text",
+        "label": "Popup Text",
+        "default": "Subscribe to our newsletter and get an exclusive discount on your first order!"
+      },
+      {
+        "type": "text",
+        "id": "popup_button_text",
+        "label": "Button Text",
+        "default": "Get My Discount"
+      }
+    ]
+  }
+]

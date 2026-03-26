@@ -1,0 +1,526 @@
+{% comment %}
+  Email Popup Section — JPAR Cosmetics
+  Newsletter signup modal with timed auto-show, localStorage dismissal,
+  Shopify customer creation form, and success/error states.
+  Matches the React EmailPopup component.
+{% endcomment %}
+
+{%- if settings.popup_enabled -%}
+  {%- liquid
+    assign popup_heading = settings.popup_heading | default: 'Get 10% Off'
+    assign popup_text = settings.popup_text | default: 'Subscribe to our newsletter and get an exclusive discount on your first order!'
+    assign popup_button_text = settings.popup_button_text | default: 'Get My Discount'
+    assign popup_delay = settings.popup_delay | default: 10
+  -%}
+
+  <div
+    class="popup-overlay"
+    id="email-popup"
+    data-popup-delay="{{ popup_delay }}"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Newsletter signup"
+  >
+    <div class="popup-card">
+      {%- comment -%} Close button {%- endcomment -%}
+      <button
+        type="button"
+        class="popup-close"
+        data-popup-close
+        aria-label="Close popup"
+      >
+        {% render 'icon-svg', icon: 'x' %}
+      </button>
+
+      {%- comment -%} Default content (hidden when success shows) {%- endcomment -%}
+      <div class="popup-content" data-popup-content>
+        {%- comment -%} Icon {%- endcomment -%}
+        <div class="popup-icon-wrap">
+          <div class="popup-icon-circle">
+            {% render 'icon-svg', icon: 'mail' %}
+          </div>
+          <span class="popup-sparkle" aria-hidden="true">
+            {% render 'icon-svg', icon: 'sparkles' %}
+          </span>
+        </div>
+
+        {%- comment -%} Heading {%- endcomment -%}
+        <h2 class="popup-heading">{{ popup_heading | escape }}</h2>
+
+        {%- comment -%} Description {%- endcomment -%}
+        <p class="popup-text">{{ popup_text | escape }}</p>
+
+        {%- comment -%} Error display {%- endcomment -%}
+        <div class="popup-error" data-popup-error role="alert" aria-live="polite"></div>
+
+        {%- comment -%} Newsletter form — Shopify customer creation {%- endcomment -%}
+        {% form 'customer', id: 'email-popup-form', class: 'popup-form', data-popup-form: '' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <input type="hidden" name="contact[accepts_marketing]" value="true">
+
+          <div class="popup-input-wrap">
+            <span class="popup-input-icon" aria-hidden="true">
+              {% render 'icon-svg', icon: 'mail' %}
+            </span>
+            <input
+              type="email"
+              name="contact[email]"
+              id="popup-email-{{ section.id }}"
+              class="popup-input"
+              placeholder="Enter your email"
+              required
+              autocomplete="email"
+              aria-label="Email address"
+            >
+          </div>
+
+          <button type="submit" class="popup-submit btn btn-primary btn-lg" data-popup-submit>
+            <span class="popup-submit-label" data-popup-submit-text>{{ popup_button_text | escape }}</span>
+            <span class="popup-submit-spinner" data-popup-spinner aria-hidden="true">
+              {% render 'icon-svg', icon: 'loader' %}
+            </span>
+          </button>
+        {% endform %}
+
+        <p class="popup-fine-print">No spam, ever. Unsubscribe anytime.</p>
+      </div>
+
+      {%- comment -%} Success state (hidden by default) {%- endcomment -%}
+      <div class="popup-success" data-popup-success>
+        <div class="popup-success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3 class="popup-success-heading">You're all set!</h3>
+        <p class="popup-success-text">Check your inbox for your exclusive discount code.</p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ── Overlay ──────────────────────────────────────────────── */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      padding: var(--space-4, 1rem);
+
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--transition, 300ms ease), visibility var(--transition, 300ms ease);
+    }
+
+    .popup-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .popup-card {
+      position: relative;
+      width: 100%;
+      max-width: 28rem;
+      background: linear-gradient(135deg, var(--color-secondary-bg, #FAF5F5), rgba(250, 245, 245, 0.5));
+      border: 1px solid var(--color-border, #E8DEDE);
+      border-radius: 1.5rem;
+      padding: var(--space-8, 2rem);
+      box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0,0,0,0.25));
+
+      transform: scale(0.9) translateY(1rem);
+      transition: transform var(--transition, 300ms ease);
+    }
+
+    .popup-overlay.open .popup-card {
+      transform: scale(1) translateY(0);
+    }
+
+    /* ── Close button ─────────────────────────────────────────── */
+    .popup-close {
+      position: absolute;
+      top: var(--space-3, 0.75rem);
+      right: var(--space-3, 0.75rem);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-full, 9999px);
+      color: var(--color-primary, #E02020);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition-fast, 150ms ease);
+      z-index: 1;
+    }
+
+    .popup-close:hover {
+      background: var(--color-primary-10, rgba(224, 32, 32, 0.1));
+    }
+
+    .popup-close svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* ── Content ──────────────────────────────────────────────── */
+    .popup-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .popup-content.hidden { display: none; }
+
+    /* ── Icon circle ──────────────────────────────────────────── */
+    .popup-icon-wrap {
+      position: relative;
+      margin-bottom: var(--space-5, 1.25rem);
+    }
+
+    .popup-icon-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: var(--radius-full, 9999px);
+      background: linear-gradient(135deg, var(--color-primary, #E02020), var(--color-primary-dark, #B31A1A));
+      color: #fff;
+    }
+
+    .popup-icon-circle svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .popup-sparkle {
+      position: absolute;
+      top: -0.375rem;
+      right: -0.375rem;
+      color: var(--color-primary, #E02020);
+    }
+
+    .popup-sparkle svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    /* ── Typography ───────────────────────────────────────────── */
+    .popup-heading {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-fg, #2E1F1F);
+      line-height: 1.3;
+      margin: 0 0 var(--space-2, 0.5rem);
+    }
+
+    .popup-text {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: var(--color-muted, #6B5E5E);
+      margin: 0 0 var(--space-6, 1.5rem);
+      max-width: 22rem;
+    }
+
+    /* ── Error ────────────────────────────────────────────────── */
+    .popup-error {
+      width: 100%;
+      font-size: 0.8125rem;
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm, 0.5rem);
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      margin-bottom: var(--space-3, 0.75rem);
+      display: none;
+    }
+
+    .popup-error.visible { display: block; }
+
+    /* ── Form ─────────────────────────────────────────────────── */
+    .popup-form {
+      width: 100%;
+    }
+
+    .popup-input-wrap {
+      position: relative;
+      margin-bottom: var(--space-3, 0.75rem);
+    }
+
+    .popup-input-icon {
+      position: absolute;
+      top: 50%;
+      left: 0.875rem;
+      transform: translateY(-50%);
+      display: inline-flex;
+      color: var(--color-muted, #6B5E5E);
+      pointer-events: none;
+    }
+
+    .popup-input-icon svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    .popup-input {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-fg, #2E1F1F);
+      background: var(--color-bg, #ffffff);
+      border: 1px solid var(--color-border, #E8DEDE);
+      border-radius: var(--radius, 0.75rem);
+      transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .popup-input::placeholder {
+      color: var(--color-muted, #6B5E5E);
+      opacity: 0.6;
+    }
+
+    .popup-input:focus {
+      outline: none;
+      border-color: var(--color-primary, #E02020);
+      box-shadow: 0 0 0 3px var(--color-primary-10, rgba(224, 32, 32, 0.1));
+    }
+
+    /* ── Submit button ────────────────────────────────────────── */
+    .popup-submit {
+      width: 100%;
+      position: relative;
+    }
+
+    .popup-submit-spinner {
+      display: none;
+    }
+
+    .popup-submit.loading .popup-submit-label {
+      visibility: hidden;
+    }
+
+    .popup-submit.loading .popup-submit-spinner {
+      display: inline-flex;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-submit.loading .popup-submit-spinner svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* ── Fine print ───────────────────────────────────────────── */
+    .popup-fine-print {
+      font-size: 0.75rem;
+      color: var(--color-muted, #6B5E5E);
+      margin: var(--space-4, 1rem) 0 0;
+      opacity: 0.7;
+    }
+
+    /* ── Success state ────────────────────────────────────────── */
+    .popup-success {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: var(--space-4, 1rem) 0;
+    }
+
+    .popup-success.visible {
+      display: flex;
+    }
+
+    .popup-success-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 4rem;
+      height: 4rem;
+      border-radius: var(--radius-full, 9999px);
+      background: #dcfce7;
+      color: #16a34a;
+      margin-bottom: var(--space-4, 1rem);
+    }
+
+    .popup-success-heading {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-fg, #2E1F1F);
+      margin: 0 0 var(--space-2, 0.5rem);
+    }
+
+    .popup-success-text {
+      font-size: 0.9375rem;
+      color: var(--color-muted, #6B5E5E);
+      margin: 0;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media screen and (max-width: 480px) {
+      .popup-card {
+        padding: var(--space-6, 1.5rem);
+        border-radius: var(--radius-xl, 1.25rem);
+      }
+
+      .popup-heading {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      var STORAGE_KEY = 'jpar_popup_dismissed';
+      var overlay = document.getElementById('email-popup');
+      if (!overlay) return;
+
+      var delay = parseInt(overlay.getAttribute('data-popup-delay'), 10) || 10;
+      var closeBtn = overlay.querySelector('[data-popup-close]');
+      var form = overlay.querySelector('[data-popup-form]');
+      var submitBtn = overlay.querySelector('[data-popup-submit]');
+      var submitText = overlay.querySelector('[data-popup-submit-text]');
+      var contentEl = overlay.querySelector('[data-popup-content]');
+      var successEl = overlay.querySelector('[data-popup-success]');
+      var errorEl = overlay.querySelector('[data-popup-error]');
+      var emailInput = overlay.querySelector('.popup-input[type="email"]');
+
+      /* ── Helpers ─────────────────────────────────── */
+      function openPopup() {
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        /* Trap focus to the popup */
+        if (emailInput) emailInput.focus();
+      }
+
+      function closePopup() {
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        try { localStorage.setItem(STORAGE_KEY, 'true'); } catch(e) {}
+      }
+
+      function showError(msg) {
+        if (!errorEl) return;
+        errorEl.textContent = msg;
+        errorEl.classList.add('visible');
+      }
+
+      function hideError() {
+        if (!errorEl) return;
+        errorEl.textContent = '';
+        errorEl.classList.remove('visible');
+      }
+
+      function showSuccess() {
+        if (contentEl) contentEl.classList.add('hidden');
+        if (successEl) successEl.classList.add('visible');
+        /* Auto-close after 3 seconds */
+        setTimeout(closePopup, 3000);
+      }
+
+      function setLoading(loading) {
+        if (!submitBtn) return;
+        if (loading) {
+          submitBtn.classList.add('loading');
+          submitBtn.disabled = true;
+        } else {
+          submitBtn.classList.remove('loading');
+          submitBtn.disabled = false;
+        }
+      }
+
+      /* ── Auto-show after delay ──────────────────── */
+      var dismissed = false;
+      try { dismissed = localStorage.getItem(STORAGE_KEY) === 'true'; } catch(e) {}
+
+      if (!dismissed) {
+        setTimeout(openPopup, delay * 1000);
+      }
+
+      /* ── Close events ───────────────────────────── */
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closePopup);
+      }
+
+      /* Click on backdrop (outside card) to close */
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closePopup();
+      });
+
+      /* Escape key to close */
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) {
+          closePopup();
+        }
+      });
+
+      /* ── Form submission ────────────────────────── */
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          hideError();
+
+          var email = emailInput ? emailInput.value.trim() : '';
+          if (!email) {
+            showError('Please enter your email address.');
+            return;
+          }
+
+          setLoading(true);
+
+          /* Submit to Shopify customer endpoint via fetch */
+          var formData = new FormData(form);
+
+          fetch(form.action || '/contact#contact_form', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          })
+          .then(function(res) {
+            setLoading(false);
+            if (res.ok || res.status === 302 || res.status === 200) {
+              showSuccess();
+            } else {
+              return res.text().then(function(text) {
+                /* Check for common Shopify customer errors */
+                if (text.indexOf('has already been taken') > -1) {
+                  showError('This email is already subscribed!');
+                } else {
+                  showError('Something went wrong. Please try again.');
+                }
+              });
+            }
+          })
+          .catch(function() {
+            setLoading(false);
+            showError('Network error. Please check your connection and try again.');
+          });
+        });
+      }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Email Popup",
+  "tag": "div",
+  "class": "section-email-popup",
+  "limit": 1,
+  "settings": []
+}
+{% endschema %}

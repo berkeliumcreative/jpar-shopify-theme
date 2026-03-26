@@ -1,0 +1,283 @@
+{% comment %}
+  Story Values — Values Grid
+  4-column responsive grid showcasing brand values with icons.
+  Matches the React Story page values section.
+  Secondary background, centered text cards with gradient icon titles.
+{% endcomment %}
+
+{%- liquid
+  assign label = section.settings.label | default: 'What We Stand For'
+  assign heading = section.settings.heading | default: 'Our Values'
+  assign heading_highlight = section.settings.heading_highlight | default: 'Values'
+-%}
+
+<section
+  id="story-values-{{ section.id }}"
+  class="story-values"
+  data-section-id="{{ section.id }}"
+  data-section-type="story-values"
+>
+  <div class="story-values__container container">
+    {%- comment -%} Section header {%- endcomment -%}
+    <div class="story-values__header">
+      {%- if label != blank -%}
+        <span class="story-values__label section-label">
+          {{ label | escape }}
+        </span>
+      {%- endif -%}
+
+      <h2 class="story-values__title">
+        {%- assign title_words = heading | split: ' ' -%}
+        {%- for word in title_words -%}
+          {%- if word == heading_highlight -%}
+            <span class="text-gradient-rose">{{ word | escape }}</span>
+          {%- else -%}
+            {{ word | escape }}
+          {%- endif -%}
+          {%- unless forloop.last %} {% endunless -%}
+        {%- endfor -%}
+      </h2>
+    </div>
+
+    {%- comment -%} Values grid {%- endcomment -%}
+    <div class="story-values__grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign value_title = block.settings.title | default: 'Value'
+            assign value_desc = block.settings.description
+            assign value_icon = block.settings.icon | default: 'leaf'
+          -%}
+
+          <div class="story-values__card" {{ block.shopify_attributes }}>
+            <div class="story-values__icon-wrap" aria-hidden="true">
+              {% render 'icon-svg', icon: value_icon %}
+            </div>
+            <h3 class="story-values__card-title">{{ value_title | escape }}</h3>
+            {%- if value_desc != blank -%}
+              <p class="story-values__card-desc">{{ value_desc | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Default values when no blocks configured {%- endcomment -%}
+        {%- assign default_titles = "Clean Beauty|Ethical Practices|Sustainable Future|Effective Results" | split: "|" -%}
+        {%- assign default_icons = "leaf|rabbit|recycle|sparkles" | split: "|" -%}
+        {%- assign default_descs = "Every ingredient is carefully vetted to ensure it meets our strict standards for purity, safety, and effectiveness.|We never test on animals and ensure our entire supply chain upholds the highest ethical standards.|From packaging to production, we minimize our environmental footprint and champion sustainable beauty.|Nature-inspired formulas backed by science, delivering visible results you can see and feel." | split: "|" -%}
+
+        {%- for title_item in default_titles -%}
+          <div class="story-values__card">
+            <div class="story-values__icon-wrap" aria-hidden="true">
+              {% render 'icon-svg', icon: default_icons[forloop.index0] %}
+            </div>
+            <h3 class="story-values__card-title">{{ title_item }}</h3>
+            <p class="story-values__card-desc">{{ default_descs[forloop.index0] }}</p>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ── Section wrapper ────────────────────────────────────── */
+  #story-values-{{ section.id }} {
+    background-color: var(--color-secondary-bg, #FAF5F5);
+    padding-top: var(--space-20, 5rem);
+    padding-bottom: var(--space-20, 5rem);
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  #story-values-{{ section.id }} .story-values__header {
+    text-align: center;
+    margin-bottom: var(--space-12, 3rem);
+  }
+
+  #story-values-{{ section.id }} .story-values__label {
+    display: inline-block;
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+
+  #story-values-{{ section.id }} .story-values__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--color-fg, #2E1F1F);
+    margin: 0;
+  }
+
+  /* ── Grid ───────────────────────────────────────────────── */
+  #story-values-{{ section.id }} .story-values__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6, 1.5rem);
+  }
+
+  @media screen and (min-width: 640px) {
+    #story-values-{{ section.id }} .story-values__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    #story-values-{{ section.id }} .story-values__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* ── Card ───────────────────────────────────────────────── */
+  #story-values-{{ section.id }} .story-values__card {
+    text-align: center;
+    padding: var(--space-8, 2rem) var(--space-6, 1.5rem);
+    background-color: var(--color-card, #ffffff);
+    border-radius: var(--radius-lg, 1rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
+    transition: box-shadow var(--transition, 300ms ease), transform var(--transition, 300ms ease);
+  }
+
+  #story-values-{{ section.id }} .story-values__card:hover {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.1));
+    transform: translateY(-2px);
+  }
+
+  /* ── Icon ───────────────────────────────────────────────── */
+  #story-values-{{ section.id }} .story-values__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-full, 9999px);
+    background-color: var(--color-primary-10, rgba(224, 32, 32, 0.1));
+    color: var(--color-primary, #E02020);
+    margin-bottom: var(--space-4, 1rem);
+  }
+
+  #story-values-{{ section.id }} .story-values__icon-wrap svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* ── Card title (gradient text) ─────────────────────────── */
+  #story-values-{{ section.id }} .story-values__card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 var(--space-2, 0.5rem);
+    background: linear-gradient(to right, var(--color-primary, #E02020), var(--color-primary-dark, #B31A1A));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Card description ───────────────────────────────────── */
+  #story-values-{{ section.id }} .story-values__card-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted, #6B5E5E);
+    margin: 0;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Story Values",
+  "tag": "section",
+  "class": "section-story-values",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Section Label",
+      "default": "What We Stand For"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Values"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Gradient Word",
+      "info": "Which word in the heading should have the gradient effect.",
+      "default": "Values"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Our Value"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Describe this brand value and why it matters to your customers."
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "leaf", "label": "Leaf (Clean)" },
+            { "value": "rabbit", "label": "Rabbit (Ethical)" },
+            { "value": "recycle", "label": "Recycle (Sustainable)" },
+            { "value": "sparkles", "label": "Sparkles (Effective)" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "flask", "label": "Flask" },
+            { "value": "gem", "label": "Gem" }
+          ],
+          "default": "leaf"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Story Values",
+      "blocks": [
+        {
+          "type": "value",
+          "settings": {
+            "title": "Clean Beauty",
+            "description": "Every ingredient is carefully vetted to ensure it meets our strict standards for purity, safety, and effectiveness.",
+            "icon": "leaf"
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "title": "Ethical Practices",
+            "description": "We never test on animals and ensure our entire supply chain upholds the highest ethical standards.",
+            "icon": "rabbit"
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "title": "Sustainable Future",
+            "description": "From packaging to production, we minimize our environmental footprint and champion sustainable beauty.",
+            "icon": "recycle"
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "title": "Effective Results",
+            "description": "Nature-inspired formulas backed by science, delivering visible results you can see and feel.",
+            "icon": "sparkles"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

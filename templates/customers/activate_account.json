@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "customer_activate": {
+      "type": "customer-activate-account",
+      "settings": {}
+    }
+  },
+  "order": ["customer_activate"]
+}

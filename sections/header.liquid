@@ -83,11 +83,14 @@
 
     {%- comment -%} Right-side actions {%- endcomment -%}
     <div class="header__actions">
-      <a href="/account" class="header__action-btn" aria-label="Account">
+      <a href="/account" class="header__action-btn header__account-btn" aria-label="Account">
         {% render 'icon-svg', icon: 'user' %}
+        {%- if customer -%}
+          <span class="header__account-dot" aria-hidden="true"></span>
+        {%- endif -%}
       </a>
 
-      <a href="/cart" class="header__action-btn header__cart-btn" aria-label="Cart ({{ cart.item_count }} items)">
+      <a href="/cart" class="header__action-btn header__cart-btn" data-cart-toggle aria-label="Cart ({{ cart.item_count }} items)">
         {% render 'icon-svg', icon: 'cart' %}
         {%- if cart.item_count > 0 -%}
           <span class="header__cart-badge" data-cart-count>{{ cart.item_count }}</span>
@@ -344,6 +347,37 @@
     width: 40px;
     height: 40px;
     object-fit: contain;
+    transition: filter 0.3s ease;
+  }
+
+  .header--dark .header__logo img {
+    filter: brightness(0) invert(1);
+  }
+
+  .header--light .header__logo img {
+    filter: none;
+  }
+
+  /* Account logged-in dot */
+  .header__account-btn {
+    position: relative;
+  }
+
+  .header__account-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: hsl(0, 75%, 50%);
+    border-radius: 50%;
+  }
+
+  @media (min-width: 768px) {
+    .header__account-dot {
+      width: 10px;
+      height: 10px;
+    }
   }
 
   /* ==============================
@@ -379,7 +413,6 @@
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    text-transform: uppercase;
     text-decoration: none;
     background: none;
     border: none;

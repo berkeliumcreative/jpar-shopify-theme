@@ -5,28 +5,25 @@
   JS hooks: .hero-typewriter[data-typewriter], .typewriter-cursor, .magnetic-wrap
 {% endcomment %}
 
-{{ 'section-hero-lamp.css' | asset_url | stylesheet_tag }}
-
 {%- liquid
   assign heading_image = section.settings.heading_image
-  assign typewriter_raw = section.settings.typewriter_words | default: "Clean Beauty\nRadiant Skin\nLuxury Skincare\nNatural Glow"
-  assign typewriter_lines = typewriter_raw | split: "\n"
+  assign typewriter_raw = section.settings.typewriter_words
   assign button_text = section.settings.button_text | default: 'Shop Now'
   assign button_link = section.settings.button_link | default: '/collections/all'
 -%}
 
-{%- capture typewriter_json -%}
-  [
-    {%- for line in typewriter_lines -%}
-      "{{ line | strip | escape }}"{% unless forloop.last %},{% endunless %}
-    {%- endfor -%}
-  ]
-{%- endcapture -%}
+{%- comment -%} Build JSON array from newline-separated textarea {%- endcomment -%}
+{%- if typewriter_raw == blank -%}
+  {%- assign typewriter_json = '["Clean Beauty","Radiant Skin","Luxury Skincare","Natural Glow"]' -%}
+{%- else -%}
+  {%- assign typewriter_lines = typewriter_raw | newline_to_br | split: '<br />' -%}
+  {%- capture typewriter_json -%}[{%- for line in typewriter_lines -%}{%- assign clean_line = line | strip -%}{%- if clean_line != blank -%}"{{ clean_line | escape }}"{%- unless forloop.last -%},{%- endunless -%}{%- endif -%}{%- endfor -%}]{%- endcapture -%}
+{%- endif -%}
 
 <section
   id="hero-{{ section.id }}"
   class="hero-lamp"
-  style="background-image: url('{{ 'hero-gradient-bg.jpg' | asset_url }}');"
+  style="background: linear-gradient(to bottom, hsl(4, 84%, 50%) 0%, hsl(4, 70%, 62%) 35%, hsl(4, 50%, 78%) 60%, hsl(4, 30%, 92%) 85%, #ffffff 100%);"
   data-section-id="{{ section.id }}"
   data-section-type="hero-lamp"
 >
@@ -71,7 +68,7 @@
       data-deleting-speed="40"
       data-pause="2500"
     >
-      <span class="hero-typewriter__text" aria-live="polite" aria-atomic="true"></span>
+      <span class="hero-typewriter__text" data-typewriter-text aria-live="polite" aria-atomic="true"></span>
       <span class="typewriter-cursor" aria-hidden="true">|</span>
     </div>
 
@@ -111,11 +108,7 @@
   #hero-{{ section.id }} .hero-lamp__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.15) 0%,
-      rgba(0, 0, 0, 0.35) 100%
-    );
+    background: transparent;
     z-index: 1;
     pointer-events: none;
   }
@@ -170,15 +163,14 @@
   #hero-{{ section.id }} .hero-typewriter__text {
     font-size: 1.25rem;
     font-weight: 300;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   @media screen and (min-width: 750px) {
     #hero-{{ section.id }} .hero-typewriter__text {
       font-size: 1.5rem;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.03em;
     }
   }
 

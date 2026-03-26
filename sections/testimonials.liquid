@@ -178,17 +178,15 @@
   /* Card */
   #testimonials-{{ section.id }} .testimonials__card {
     background-color: var(--color-background, #ffffff);
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    transition: transform 0.3s ease;
   }
 
   #testimonials-{{ section.id }} .testimonials__card:hover {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
   }
 

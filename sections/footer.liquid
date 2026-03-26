@@ -20,9 +20,9 @@
       </a>
 
       <div class="footer__socials">
-        {%- if settings.social_instagram_link != blank -%}
+        {%- if settings.social_instagram != blank -%}
           <a
-            href="{{ settings.social_instagram_link }}"
+            href="{{ settings.social_instagram }}"
             class="footer__social-link"
             aria-label="Instagram"
             target="_blank"
@@ -32,9 +32,9 @@
           </a>
         {%- endif -%}
 
-        {%- if settings.social_facebook_link != blank -%}
+        {%- if settings.social_facebook != blank -%}
           <a
-            href="{{ settings.social_facebook_link }}"
+            href="{{ settings.social_facebook }}"
             class="footer__social-link"
             aria-label="Facebook"
             target="_blank"
@@ -44,9 +44,9 @@
           </a>
         {%- endif -%}
 
-        {%- if settings.social_twitter_link != blank -%}
+        {%- if settings.social_twitter != blank -%}
           <a
-            href="{{ settings.social_twitter_link }}"
+            href="{{ settings.social_twitter }}"
             class="footer__social-link"
             aria-label="Twitter"
             target="_blank"
@@ -61,19 +61,10 @@
     {%- comment -%} Center: Nav Links {%- endcomment -%}
     <nav class="footer__nav" aria-label="Footer navigation">
       <ul class="footer__nav-list">
-        {%- if linklists['footer'].links.size > 0 -%}
-          {%- for link in linklists['footer'].links -%}
-            <li>
-              <a href="{{ link.url }}" class="footer__nav-link">{{ link.title }}</a>
-            </li>
-          {%- endfor -%}
-        {%- else -%}
-          {%- comment -%} Fallback links when no footer linklist exists {%- endcomment -%}
-          <li><a href="/collections/all" class="footer__nav-link">Shop</a></li>
-          <li><a href="/pages/our-story" class="footer__nav-link">Story</a></li>
-          <li><a href="/blogs/journal" class="footer__nav-link">Blog</a></li>
-          <li><a href="/pages/contact" class="footer__nav-link">Contact</a></li>
-        {%- endif -%}
+        <li><a href="/collections/all" class="footer__nav-link">Shop</a></li>
+        <li><a href="/pages/story" class="footer__nav-link">Story</a></li>
+        <li><a href="/blogs/news" class="footer__nav-link">Blog</a></li>
+        <li><a href="/pages/contact" class="footer__nav-link">Contact</a></li>
 
         {%- for block in section.blocks -%}
           {%- if block.type == 'custom_link' -%}
@@ -204,7 +195,6 @@
     font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.03em;
-    text-transform: uppercase;
     color: #fff;
     text-decoration: none;
     transition: opacity 0.2s ease;
